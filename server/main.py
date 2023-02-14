@@ -13,12 +13,12 @@ from database import (
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",
-]
-
 # what is a middleware? 
 # software that acts as a bridge between an operating system or database and applications, especially on a network.
+
+origins = [
+    "*"
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,12 +37,12 @@ async def get_todo():
     response = await fetch_all_todos()
     return response
 
-@app.get("/api/todo/{title}", response_model=Todo)
-async def get_todo_by_title(title):
-    response = await fetch_one_todo(title)
+@app.get("/api/todo/{subject}", response_model=Todo)
+async def get_todo_by_subject(subject):
+    response = await fetch_one_todo(subject)
     if response:
         return response
-    raise HTTPException(404, f"There is no todo with the title {title}")
+    raise HTTPException(404, f"There is no todo with the subject {subject}")
 
 @app.post("/api/todo/", response_model=Todo)
 async def post_todo(todo: Todo):
@@ -51,16 +51,16 @@ async def post_todo(todo: Todo):
         return response
     raise HTTPException(400, "Something went wrong")
 
-@app.put("/api/todo/{title}/", response_model=Todo)
-async def put_todo(title: str, desc: str):
-    response = await update_todo(title, desc)
+@app.put("/api/todo/{subject}/", response_model=Todo)
+async def put_todo(subject: str, desc: str, deadline: str, status: bool):
+    response = await update_todo(subject, desc, deadline, status)
     if response:
         return response
-    raise HTTPException(404, f"There is no todo with the title {title}")
+    raise HTTPException(404, f"There is no todo with the subject {subject}")
 
-@app.delete("/api/todo/{title}")
-async def delete_todo(title):
-    response = await remove_todo(title)
+@app.delete("/api/todo/{subject}")
+async def delete_todo(subject):
+    response = await remove_todo(subject)
     if response:
         return "Successfully deleted todo"
-    raise HTTPException(404, f"There is no todo with the title {title}")
+    raise HTTPException(404, f"There is no todo with the subject {subject}")

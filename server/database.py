@@ -5,8 +5,8 @@ client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://jassonrin:stfuimi
 database = client.TodoList
 collection = database.todo
 
-async def fetch_one_todo(title):
-    document = await collection.find_one({"title": title})
+async def fetch_one_todo(subject):
+    document = await collection.find_one({"subject": subject})
     return document
 
 async def fetch_all_todos():
@@ -22,11 +22,13 @@ async def create_todo(todo):
     return document
 
 
-async def update_todo(title, desc):
-    await collection.update_one({"title": title}, {"$set": {"description": desc}})
-    document = await collection.find_one({"title": title})
+async def update_todo(subject, desc, deadline, status):
+    await collection.update_one({"subject": subject}, {"$set": {"description": desc}})
+    await collection.update_one({"subject": subject}, {"$set": {"deadline": deadline}})
+    await collection.update_one({"subject": subject}, {"$set": {"status": status}}) 
+    document = await collection.find_one({"subject": subject})
     return document
 
-async def remove_todo(title):
-    await collection.delete_one({"title": title})
+async def remove_todo(subject):
+    await collection.delete_one({"subject": subject})
     return True

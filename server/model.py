@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
 class Todo(BaseModel):
-    title: str
+    subject: str
     description: str
+    deadline: str
+    status: bool
