@@ -3,6 +3,7 @@ import {
   Box,
   Typography,
 } from "@mui/material"
+import { bool } from "yup";
 
 // const Course = ({ subject, description, deadline, status }) => {
 
@@ -47,12 +48,21 @@ import {
 // };
 
 const Course = ({ para }) => {
-  return <Typography
-    fontSize="clamp(1rem, 1rem, 0.25rem)"
-    style={{color: "rgb(55, 53, 47)"}}
-  >
-    {para}
-  </Typography>
+  if (typeof(para) === "boolean") {
+    return <input
+      style={{width: "1.5rem", height: "1.5rem", marginTop:"10px"}}
+      type="checkbox"
+      defaultChecked={para}
+      // onChange={}
+    />
+  } else {
+    return <Typography
+      fontSize="clamp(1rem, 1rem, 0.25rem)"
+      style={{color: "rgb(55, 53, 47)"}}
+    >
+      {para}
+    </Typography>
+  }
 };
 
 export default Course;

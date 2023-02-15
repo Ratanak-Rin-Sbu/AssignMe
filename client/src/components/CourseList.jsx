@@ -3,6 +3,7 @@ import SubjectCol from "./SubjectCol";
 import DescCol from "./DescCol";
 import FlexBetween from "./FlexBetween";
 import DeadlineCol from "./DeadlineCol";
+import StatusCol from "./StatusCol";
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -30,6 +31,7 @@ const CourseList = () => {
       <SubjectCol courses={courses}/>
       <DescCol courses={courses}/>
       <DeadlineCol courses={courses}/>
+      <StatusCol courses={courses}/>
     </FlexBetween>
 };
 
