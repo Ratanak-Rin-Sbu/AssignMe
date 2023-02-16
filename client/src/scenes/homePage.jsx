@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, Divider } from "@mui/material";
 import { useSelector } from "react-redux";
 import NavBar from "components/NavBar";
 import CourseList from "components/CourseList";

@@ -3,7 +3,7 @@ import FlexBetween from "./FlexBetween";
 import Course from "./Course";
 import { Description } from "@mui/icons-material";
 
-const DescCol = ({ courses }) => {
+const DescCol = ({ tasks }) => {
 
   return <FlexBetween flexDirection="column">
     <Box m="2rem 10rem 0 0">
@@ -18,10 +18,10 @@ const DescCol = ({ courses }) => {
         <Description />
       </FlexBetween>
     </Box>
-    {courses.map((course) => (
+    {tasks.map((task) => (
       <Course
-        key={course._id}
-        para={course.subject}
+        key={task._id}
+        para={task.description}
       />
     ))}
   </FlexBetween>

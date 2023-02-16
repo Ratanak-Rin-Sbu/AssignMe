@@ -15,7 +15,7 @@ import {
   LightMode,
   Menu,
   Close,
-  Check,
+  AssignmentTurnedIn,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
@@ -52,7 +52,7 @@ const NavBar = () => {
         }}>
           AssignMe
       </Typography>
-      <Check fontSize="large"/>
+      <AssignmentTurnedIn fontSize="large"/>
     </FlexBetween>
     {/* DESKTOP NAV */}
     {isNonMobileScreens ? (

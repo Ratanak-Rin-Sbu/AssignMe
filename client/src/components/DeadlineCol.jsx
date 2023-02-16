@@ -3,7 +3,7 @@ import FlexBetween from "./FlexBetween";
 import Course from "./Course";
 import { CalendarMonth } from "@mui/icons-material";
 
-const DeadlineCol = ({ courses }) => {
+const DeadlineCol = ({ tasks }) => {
 
   return <FlexBetween flexDirection="column">
     <Box m="2rem 10rem 0 0">
@@ -18,10 +18,10 @@ const DeadlineCol = ({ courses }) => {
         <CalendarMonth />
       </FlexBetween>
     </Box>
-    {courses.map((course) => (
+    {tasks.map((task) => (
       <Course
-        key={course._id}
-        para={course.deadline}
+        key={task._id}
+        para={task.deadline}
       />
     ))}
   </FlexBetween>

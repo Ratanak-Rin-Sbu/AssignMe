@@ -7,4 +7,47 @@ body,
   height: 100%;
   width: 100%;
   font-family: "Rubik", sans-serif;
+  background-color: #F3F3F3;
+}
+
+button {
+  margin-top: 15px;
+  width: 5rem;
+  height: 1.8rem;
+  color: rgb(55, 53, 47);
+  background: transparent;
+  border-radius: 5px;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+
+button:hover {
+  color: whitesmoke;
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+}
+
+button:active {
+  -webkit-transform: translate(5px, 5px);
+  transform: translate(5px, 5px);
+}
+
+.btn-add {
+  border: 3px solid aqua;
+}
+
+.btn-add:hover {
+  background: aqua;
+  border: 3px solid aqua;
+}
+
+.btn-cancel {
+  border: 3px solid red;
+}
+
+.btn-cancel:hover {
+  background-color: red;
+  border: 3px solid red;
 }
