@@ -2,7 +2,7 @@ import {
   Typography,
   Divider
 } from "@mui/material"
-import { useState } from "react";
+import { Delete, MoreVert } from "@mui/icons-material"
 
 const Course = ({ para, task }) => {
   const updateStatus = async () => {
@@ -24,6 +24,15 @@ const Course = ({ para, task }) => {
     para = !para;
   };
 
+  const deleteTask = async () => {
+    await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+      method: 'DELETE',
+    }).then((response) => {
+      console.log("Deleted a task");
+    })
+    window.location.reload();
+  };
+
   if (typeof(para) === "boolean") {
     return <>
       <input
@@ -33,7 +42,15 @@ const Course = ({ para, task }) => {
         onChange={updateStatus}
       />
     </>
-  } else {
+  } else if (para == null) {
+    return <>
+      <Delete
+        style={{width: "1.8rem", height: "1.8rem", marginTop:"7px"}}
+        onClick={deleteTask}
+      />
+    </>
+  } 
+  else {
     return <>
       <Typography
         fontSize="clamp(1rem, 1rem, 0.25rem)"

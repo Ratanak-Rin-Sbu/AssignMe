@@ -85,12 +85,12 @@ async def put_todo(id: PyObjectId, todo: UpdateTodoModel):
     raise HTTPException(404, f"There is no todo with the id {id}")
 
 # DELETE A TASK
-async def remove_todo(subject):
-    await collection.delete_one({"subject": subject})
+async def remove_todo(id: PyObjectId):
+    await collection.delete_one({"id": id})
     return True
 
 @app.delete("/api/todo/{id}")
-async def delete_todo(id):
+async def delete_todo(id: PyObjectId):
     response = await remove_todo(id)
     if response:
         return "Successfully deleted todo"

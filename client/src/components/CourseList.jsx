@@ -5,7 +5,8 @@ import DescCol from "./DescCol";
 import FlexBetween from "./FlexBetween";
 import DeadlineCol from "./DeadlineCol";
 import StatusCol from "./StatusCol";
-import { Add } from "@mui/icons-material";
+import MoreCol from "./MoreCol";
+import { Add, Delete, MoreVert } from "@mui/icons-material";
 import { Divider } from "@mui/material";
 
 const CourseList = () => {
@@ -111,6 +112,13 @@ const CourseList = () => {
             style={{width: "1.5rem", height: "1.5rem", marginTop:"10px"}}
             onChange={event => setStatus(event.target.value)}
           />
+        )}
+      </FlexBetween>
+
+      <FlexBetween flexDirection="column">
+        <MoreCol tasks={tasks}/>
+        {isClickedAdd && (
+          <Delete style={{width: "1.8rem", height: "1.8rem", marginTop:"7px"}}/>
         )}
       </FlexBetween>
     </FlexBetween>
