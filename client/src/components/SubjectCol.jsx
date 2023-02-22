@@ -21,8 +21,9 @@ const SubjectCol = ({ tasks }) => {
 
     {tasks.map((task) => (
       <Course
-        key={task._id}
+        key={task.id}
         para={task.subject}
+        task={task}
       />
     ))}
   </FlexBetween>

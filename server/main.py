@@ -1,21 +1,20 @@
-from fastapi import FastAPI, HTTPException
-
-from model import Todo
-
-from database import (
-    fetch_one_todo,
-    fetch_all_todos,
-    create_todo,
-    update_todo,
-    remove_todo,
-)
-
+import motor.motor_asyncio
+from fastapi import FastAPI, HTTPException, Request
+from model import Todo, UpdateTodoModel
+from fastapi import Body
+from PyObjectId import PyObjectId
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
+
+# DATABASE SETUP
+client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://jassonrin:stfuimissHER0730@cluster0.4wfy1nc.mongodb.net/?retryWrites=true&w=majority')
+database = client.TodoList
+collection = database.todo
 
 # what is a middleware? 
 # software that acts as a bridge between an operating system or database and applications, especially on a network.
 
+# CORS SETUP
 origins = [
     "*"
 ]
@@ -28,39 +27,71 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ROUTES
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
 
-@app.get("/api/todo")
+# GET ONE TASK
+async def fetch_one_todo(id):
+    document = await collection.find_one({"id": id})
+    return document
+
+@app.get("/api/todo/{id}", response_model=Todo)
+async def get_todo_by_id(id: PyObjectId):
+    response = await fetch_one_todo(id)
+    if response:
+        return response
+    raise HTTPException(404, f"There is no todo with the id {id}")
+
+# GET ALL TASKS
+async def fetch_all_todos():
+    todos = []
+    cursor = collection.find({})
+    async for document in cursor:
+        todos.append(Todo(**document))
+    return todos
+
+@app.get("/api/todos")
 async def get_todo():
     response = await fetch_all_todos()
     return response
 
-@app.get("/api/todo/{subject}", response_model=Todo)
-async def get_todo_by_subject(subject):
-    response = await fetch_one_todo(subject)
-    if response:
-        return response
-    raise HTTPException(404, f"There is no todo with the subject {subject}")
+# CREATE A TASK
+async def create_todo(todo):
+    document = todo
+    result = await collection.insert_one(document)
+    return document
 
-@app.post("/api/todo/", response_model=Todo)
+@app.post("/api/todo", response_model=Todo)
 async def post_todo(todo: Todo):
     response = await create_todo(todo.dict())
     if response:
         return response
     raise HTTPException(400, "Something went wrong")
 
-@app.put("/api/todo/{subject}/", response_model=Todo)
-async def put_todo(subject: str, desc: str, deadline: str, status: bool):
-    response = await update_todo(subject, desc, deadline, status)
+# UPDATE A TASK (STATUS ONLY FOR NOW)
+async def update_todo(id: PyObjectId, todo: UpdateTodoModel):
+    if todo.status != None:
+        await collection.update_one({"id": id}, {"$set": {"status": todo.status}})
+        document = await collection.find_one({"id": id})
+        return document
+
+@app.put("/api/todo/{id}", response_model=Todo)
+async def put_todo(id: PyObjectId, todo: UpdateTodoModel):
+    response = await update_todo(id, todo)
     if response:
         return response
-    raise HTTPException(404, f"There is no todo with the subject {subject}")
+    raise HTTPException(404, f"There is no todo with the id {id}")
 
-@app.delete("/api/todo/{subject}")
-async def delete_todo(subject):
-    response = await remove_todo(subject)
+# DELETE A TASK
+async def remove_todo(subject):
+    await collection.delete_one({"subject": subject})
+    return True
+
+@app.delete("/api/todo/{id}")
+async def delete_todo(id):
+    response = await remove_todo(id)
     if response:
         return "Successfully deleted todo"
-    raise HTTPException(404, f"There is no todo with the subject {subject}")
+    raise HTTPException(404, f"There is no todo with the id {id}")

@@ -20,8 +20,9 @@ const DescCol = ({ tasks }) => {
     </Box>
     {tasks.map((task) => (
       <Course
-        key={task._id}
+        key={task.id}
         para={task.description}
+        task={task}
       />
     ))}
   </FlexBetween>

@@ -7,7 +7,6 @@ import DeadlineCol from "./DeadlineCol";
 import StatusCol from "./StatusCol";
 import { Add } from "@mui/icons-material";
 import { Divider } from "@mui/material";
-import axios from "axios";
 
 const CourseList = () => {
   const [isClickedAdd, setIsClickedAdd] = useState(false);
@@ -18,7 +17,7 @@ const CourseList = () => {
   const [status, setStatus] = useState(false);
 
   const getTasks = async () => {
-    const response = await fetch('http://localhost:8000/api/todo');
+    const response = await fetch('http://localhost:8000/api/todos');
     const data = await response.json();
     setTasks(data);
   }
@@ -29,14 +28,22 @@ const CourseList = () => {
 
   const addTask = async () => {
     if (subject && desc && deadline) {
-      await axios.post('http://localhost:8000/api/todo/', {
-        'subject': subject,
-        'description': desc,
-        'deadline': deadline,
-        'status': status
-      }).then(res => console.log(res))
+      await fetch('http://localhost:8000/api/todo', {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          subject: subject,
+          description: desc,
+          deadline: deadline,
+          status: status,
+        })
+      }).then((response) => {
+        console.log('task created');
+      });
       window.location.reload();
-    }
+    };
   };
 
   return <>

@@ -21,8 +21,9 @@ const StatusCol = ({ tasks }) => {
 
     {tasks.map((task) => (
       <Course
-        key={task._id}
+        key={task.id}
         para={task.status}
+        task={task}
       />
     ))}
   </FlexBetween>

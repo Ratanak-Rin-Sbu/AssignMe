@@ -20,8 +20,9 @@ const DeadlineCol = ({ tasks }) => {
     </Box>
     {tasks.map((task) => (
       <Course
-        key={task._id}
+        key={task.id}
         para={task.deadline}
+        task={task}
       />
     ))}
   </FlexBetween>
