@@ -6,7 +6,7 @@ import FlexBetween from "./FlexBetween";
 import DeadlineCol from "./DeadlineCol";
 import StatusCol from "./StatusCol";
 import MoreCol from "./MoreCol";
-import { Add, Delete, MoreVert } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { Divider } from "@mui/material";
 
 const CourseList = () => {
@@ -104,23 +104,23 @@ const CourseList = () => {
         )}
       </FlexBetween>
 
-      <FlexBetween flexDirection="column">
+      <FlexBetween flexDirection="column" sx={{maxWidth: "80px"}}>
         <StatusCol tasks={tasks}/>
         {isClickedAdd && (
-          <input
-            type="checkbox"
-            style={{width: "1.5rem", height: "1.5rem", marginTop:"10px"}}
-            onChange={event => setStatus(event.target.value)}
-          />
+          <FlexBetween>
+            <input
+              type="checkbox"
+              style={{width: "1.5rem", height: "1.5rem", marginTop:"18px"}}
+              onChange={event => setStatus(event.target.value)}
+            />
+            <Delete
+              style={{width: "1.8rem", height: "1.8rem", marginTop:"15px"}}
+              onClick={() => {setIsClickedAdd()}}
+            />
+          </FlexBetween>
         )}
       </FlexBetween>
 
-      <FlexBetween flexDirection="column">
-        <MoreCol tasks={tasks}/>
-        {isClickedAdd && (
-          <Delete style={{width: "1.8rem", height: "1.8rem", marginTop:"7px"}}/>
-        )}
-      </FlexBetween>
     </FlexBetween>
     {!isClickedAdd && (
       <>

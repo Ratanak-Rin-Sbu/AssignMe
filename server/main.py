@@ -72,10 +72,16 @@ async def post_todo(todo: Todo):
 
 # UPDATE A TASK (STATUS ONLY FOR NOW)
 async def update_todo(id: PyObjectId, todo: UpdateTodoModel):
+    if todo.subject != None:
+        await collection.update_one({"id": id}, {"$set": {"subject": todo.subject}})
+    if todo.description != None:
+        await collection.update_one({"id": id}, {"$set": {"description": todo.description}})
+    if todo.deadline != None:
+        await collection.update_one({"id": id}, {"$set": {"deadline": todo.deadline}})
     if todo.status != None:
         await collection.update_one({"id": id}, {"$set": {"status": todo.status}})
-        document = await collection.find_one({"id": id})
-        return document
+    document = await collection.find_one({"id": id})
+    return document
 
 @app.put("/api/todo/{id}", response_model=Todo)
 async def put_todo(id: PyObjectId, todo: UpdateTodoModel):

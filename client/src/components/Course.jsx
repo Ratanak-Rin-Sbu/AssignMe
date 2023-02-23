@@ -1,10 +1,53 @@
 import {
-  Typography,
-  Divider
+  Divider,
 } from "@mui/material"
-import { Delete, MoreVert } from "@mui/icons-material"
+import { Delete } from "@mui/icons-material"
+import { useState } from "react";
+import FlexBetween from "./FlexBetween";
 
 const Course = ({ para, task }) => {
+  console.log(task.id);
+
+  const updateTodo = async (todo) => {
+    await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      method: 'PUT',
+      body: JSON.stringify(todo),
+    }).then((response) => {
+      console.log("Update a task");
+    });
+    window.location.reload();
+  };
+
+  const updateSubject = async (value) => {
+    updateTodo({
+      subject: value,
+      description: task.description,
+      deadline: task.deadline,
+      status: task.status
+    });
+  };
+
+  const updateDescription = async (value) => {
+    updateTodo({
+      subject: task.subject,
+      description: value,
+      deadline: task.deadline,
+      status: task.status
+    });
+  };
+
+  const updateDeadline = async (value) => {
+    updateTodo({
+      subject: task.subject,
+      description: task.description,
+      deadline: value,
+      status: task.status
+    });
+  };
+
   const updateStatus = async () => {
     await fetch(`http://localhost:8000/api/todo/${task.id}`, {
       headers: {
@@ -12,10 +55,6 @@ const Course = ({ para, task }) => {
       },
       method: 'PUT',
       body: JSON.stringify({
-        // id: task.id,
-        // subject: task.subject,
-        // description: task.description,
-        // deadline: task.deadline,
         status: !para,
       }),
     }).then((response) => {
@@ -35,30 +74,42 @@ const Course = ({ para, task }) => {
 
   if (typeof(para) === "boolean") {
     return <>
-      <input
-        style={{width: "1.5rem", height: "1.5rem", marginTop:"10px"}}
-        type="checkbox"
-        defaultChecked={para}
-        onChange={updateStatus}
-      />
+      <FlexBetween>
+        <input
+          style={{width: "1.5rem", height: "1.5rem", marginTop:"18px"}}
+          type="checkbox"
+          defaultChecked={para}
+          onChange={updateStatus}
+        />
+        <Delete
+          style={{width: "1.8rem", height: "1.8rem", marginTop:"15px"}}
+          onClick={deleteTask}
+        />
+      </FlexBetween>
     </>
-  } else if (para == null) {
+  } else {
     return <>
-      <Delete
-        style={{width: "1.8rem", height: "1.8rem", marginTop:"7px"}}
-        onClick={deleteTask}
+      <input 
+        type="text"
+        defaultValue={para}
+        style={{
+          borderLeft: "none",
+          borderTop: "none",
+          borderRight: "none",
+          outline: "none",
+          backgroundColor: "#F3F3F3",
+          height: "30px",
+          marginTop: "12px",
+          fontSize: 15
+        }}
+        onChange={(e) => {if (para === task.subject) {
+          updateSubject(e.target.value);
+        } else if (para === task.description) {
+          updateDescription(e.target.value);
+        } else {
+          updateDeadline(e.target.value);
+        }}}
       />
-    </>
-  } 
-  else {
-    return <>
-      <Typography
-        fontSize="clamp(1rem, 1rem, 0.25rem)"
-        style={{color: "rgb(55, 53, 47)"}}
-        mt="12px"
-      >
-        {para}
-      </Typography>
       <Divider />
     </>
   }

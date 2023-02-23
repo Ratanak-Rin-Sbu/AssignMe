@@ -25,7 +25,7 @@ class Todo(BaseModel):
 
 class UpdateTodoModel(BaseModel):
     subject: Optional[str]
-    desc: Optional[str]
+    description: Optional[str]
     deadline: Optional[str]
     status: Optional[bool]
 
