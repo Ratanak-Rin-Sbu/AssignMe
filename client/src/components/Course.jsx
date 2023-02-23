@@ -2,51 +2,52 @@ import {
   Divider,
 } from "@mui/material"
 import { Delete } from "@mui/icons-material"
-import { useState } from "react";
 import FlexBetween from "./FlexBetween";
+import debounce from "lodash.debounce";
 
 const Course = ({ para, task }) => {
-  console.log(task.id);
 
-  const updateTodo = async (todo) => {
-    await fetch(`http://localhost:8000/api/todo/${task.id}`, {
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      method: 'PUT',
-      body: JSON.stringify(todo),
-    }).then((response) => {
-      console.log("Update a task");
-    });
-    window.location.reload();
+  const updateTodo = async (e) => {
+    if (para === task.subject) {
+      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        method: 'PUT',
+        body: JSON.stringify({
+          subject: e?.target?.value,
+        }),
+      }).then((response) => {
+        console.log("Update a task");
+      });
+    } else if (para === task.description) {
+      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        method: 'PUT',
+        body: JSON.stringify({
+          description: e?.target?.value,
+        }),
+      }).then((response) => {
+        console.log("Update a task");
+      });
+    } else {
+      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        method: 'PUT',
+        body: JSON.stringify({
+          deadline: e?.target?.value,
+        }),
+      }).then((response) => {
+        console.log("Update a task");
+      });
+    }
   };
 
-  const updateSubject = async (value) => {
-    updateTodo({
-      subject: value,
-      description: task.description,
-      deadline: task.deadline,
-      status: task.status
-    });
-  };
-
-  const updateDescription = async (value) => {
-    updateTodo({
-      subject: task.subject,
-      description: value,
-      deadline: task.deadline,
-      status: task.status
-    });
-  };
-
-  const updateDeadline = async (value) => {
-    updateTodo({
-      subject: task.subject,
-      description: task.description,
-      deadline: value,
-      status: task.status
-    });
-  };
+  const debounceOnChange = debounce(updateTodo, 500);
 
   const updateStatus = async () => {
     await fetch(`http://localhost:8000/api/todo/${task.id}`, {
@@ -102,13 +103,7 @@ const Course = ({ para, task }) => {
           marginTop: "12px",
           fontSize: 15
         }}
-        onChange={(e) => {if (para === task.subject) {
-          updateSubject(e.target.value);
-        } else if (para === task.description) {
-          updateDescription(e.target.value);
-        } else {
-          updateDeadline(e.target.value);
-        }}}
+        onChange={debounceOnChange}
       />
       <Divider />
     </>
