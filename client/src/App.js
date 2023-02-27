@@ -6,6 +6,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import TaskManager from "scenes/taskManager";
+import Schedule from "scenes/schedule";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -20,6 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/taskManager" element={<TaskManager />} />
+            <Route path="/schedule" element={<Schedule />} />
             {/* <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}

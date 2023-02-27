@@ -62,6 +62,7 @@ const HomePage = () => {
               cursor: "pointer"
             },
           }}
+          onClick={() => navigate('/schedule')}
         >
           <FlexBetween justifyContent="flex-start !important">
             <EventNote style={{
