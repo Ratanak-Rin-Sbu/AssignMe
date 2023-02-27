@@ -1,36 +1,78 @@
-import { Box, Typography, useMediaQuery, Divider } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Assignment, EventNote } from "@mui/icons-material";
+import FlexBetween from "components/FlexBetween";
 import NavBar from "components/NavBar";
-import CourseList from "components/CourseList";
+import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const navigate = useNavigate();
 
   return (
     <>
       <NavBar />
-      <Box m="0 6% 0 6%">
-        <Typography
-          fontSize="clamp(1rem, 1rem, 0.25rem)"
-          m="1rem 0 0 0"
-          style={{color: "rgb(55, 53, 47)"}}
+      <div style={{
+        margin: "10% auto",
+        padding: "10px",
+        // backgroundColor: "blue",
+        height: "auto",
+        width: "600px"
+      }}>
+        {/* FIRST ROW - AssignME */}
+        <Box
+          sx={{
+            borderRadius: "23px",
+            border: "1px solid lightpink",
+            // backgroundColor: "red",
+            margin: "auto auto 20px auto",
+            padding: "20px",
+            width: "100%",
+            height: "80px",
+            fontSize: "27px",
+            '&:hover': {
+              backgroundColor: "#E7556E",
+              opacity: [0.9, 0.8, 0.7],
+              cursor: "pointer"
+            },
+          }}
+          onClick={() => navigate('/taskManager')}
         >
-            Use this template to track your personal tasks.
-        </Typography>
-        <Typography
-          fontSize="clamp(1rem, 1rem, 0.25rem)"
-          style={{color: "rgb(55, 53, 47)"}}
+          <FlexBetween justifyContent="flex-start !important">
+            <Assignment style={{
+              fontSize: "42px",
+              marginRight: "25px"
+            }}/>
+            Task Manager
+          </FlexBetween>
+        </Box>
+
+        {/* SECOND ROW - MY SCHEDULE */}
+        <Box
+          sx={{
+            borderRadius: "23px",
+            border: "1px solid lightpink",
+            // backgroundColor: "red",
+            margin: "auto",
+            padding: "20px",
+            width: "100%",
+            height: "80px",
+            fontSize: "27px",
+            '&:hover': {
+              backgroundColor: "#E7556E",
+              opacity: [0.9, 0.8, 0.7],
+              cursor: "pointer"
+            },
+          }}
         >
-            Click + New to create a new task directly on this board.
-        </Typography>
-        <Typography
-          fontSize="clamp(1rem, 1rem, 0.25rem)"
-          style={{color: "rgb(55, 53, 47)"}}
-        >
-            Click an existing task to add additional context or subtasks.
-        </Typography>
-        <CourseList />
-      </Box>
+          <FlexBetween justifyContent="flex-start !important">
+            <EventNote style={{
+              fontSize: "42px",
+              marginRight: "25px"
+            }}/>
+            My Schedule
+          </FlexBetween>
+        </Box>
+      </div>
+      {/* <TaskManager /> */}
     </>
   );
 };

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
+import TaskManager from "scenes/taskManager";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -18,6 +19,7 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/taskManager" element={<TaskManager />} />
             {/* <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}

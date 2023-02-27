@@ -49,8 +49,10 @@ const NavBar = () => {
             color: primaryLight,
             cursor: "pointer",
             },
-        }}>
-          AssignMe
+        }}
+        onClick={() => navigate('/')}
+      >
+          AssignME
       </Typography>
       <AssignmentTurnedIn fontSize="large"/>
     </FlexBetween>
