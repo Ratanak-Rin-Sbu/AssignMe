@@ -33,6 +33,104 @@ const Schedule = () => {
         </Typography>
         <ScheduleWrapper />
       </Box>
+      <Box m="1% 6% 0 6%">
+        <Button
+          style={{
+            backgroundColor: "#48abe0",
+            color: "white",
+            border: "none",
+            padding: "5px",
+            fontSize: "31px",
+            height: "50px",
+            width: "50px",
+            boxShadow: "0 2px 4px darkslategray",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            borderRadius: "50%",
+            '&:active': {
+              backgroundColor: "#48abe0",
+              boxShadow: "0 0 2px darkslategray",
+              transform: "translateY(2px)",
+            }
+          }}
+          onClick={() => {setOpenModal(true)}}
+        >
+          +
+        </Button>
+        <Modal
+          open={openModal}
+          onClose={() => {setOpenModal(false)}}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              height: "auto",
+              backgroundColor: "#DDDDDD",
+              boxShadow: 24,
+              borderRadius: "10px",
+              p: 4,
+            }}
+          >
+            <input
+              type="text"
+              style={{
+                width: "100%",
+                border: 0,
+                borderBottom: "2px solid gray",
+                outline: 0,
+                fontSize: "1rem",
+                padding: "7px 0",
+                background: "transparent",
+                transition: "border-color 0.2s",
+                marginBottom: "15px",
+              }}
+              placeholder="Event Name"
+            />
+            <input
+              type="text"
+              style={{
+                width: "100%",
+                border: 0,
+                borderBottom: "2px solid gray",
+                outline: 0,
+                fontSize: "1rem",
+                padding: "7px 0",
+                background: "transparent",
+                transition: "border-color 0.2s",
+                marginBottom: "15px",
+              }}
+              placeholder="Location"
+            />
+            <input
+              type="text"
+              style={{
+                width: "100%",
+                border: 0,
+                borderBottom: "2px solid gray",
+                outline: 0,
+                fontSize: "1rem",
+                padding: "7px 0",
+                background: "transparent",
+                transition: "border-color 0.2s",
+                marginBottom: "15px",
+              }}
+              placeholder="Time"
+            />
+            <FlexBetween mr="89%">
+              <button
+                className="btn-add"
+                onClick={() => {setOpenModal(false)}}
+              >
+                ADD EVENT
+              </button>
+            </FlexBetween>
+          </Box>
+        </Modal>
+      </Box>
     </>
   )
 }
