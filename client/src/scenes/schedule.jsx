@@ -1,8 +1,13 @@
 import NavBar from "components/NavBar";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Modal } from "@mui/material";
+import FlexBetween from "components/FlexBetween";
 import ScheduleWrapper from "components/scheduleWrapper";
+import { Button } from 'react-bootstrap';
+import { useState } from "react";
 
 const Schedule = () => {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <>
       <NavBar />
