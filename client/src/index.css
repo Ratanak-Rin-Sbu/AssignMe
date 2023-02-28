@@ -58,20 +58,34 @@ button:focus:not(:focus-visible):not(.focus-visible) {
   outline: none
 }
 
-/* .btn-add {
-  border: 3px solid aqua;
+/* MySchedule */
+.myschedule-modal-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid gray;
+  outline: 0;
+  font-size: 1rem;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+  margin-bottom: 15px;
 }
 
-.btn-add:hover {
-  background: aqua;
-  border: 3px solid aqua;
+.label .day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-.btn-cancel {
-  border: 3px solid red;
+#day {
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
-.btn-cancel:hover {
-  background-color: red;
-  border: 3px solid red;
-} */
+.submitDay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}

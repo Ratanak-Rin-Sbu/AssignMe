@@ -45,7 +45,8 @@ class Event(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
     name: str
     place: str
-    time: str
+    start: str
+    end: str
     days: list
 
     class Config:
@@ -56,7 +57,8 @@ class Event(BaseModel):
             "example": {
                 "name": "CSE 310",
                 "place": "B108",
-                "time": "10:30-11:50",
+                "start": "10:30",
+                "end": "11:50",
                 "days": ["Monday", "Tuesday"],
             }
         }
@@ -64,7 +66,8 @@ class Event(BaseModel):
 class UpdateEventModel(BaseModel):
     name: Optional[str]
     place: Optional[str]
-    time: Optional[str]
+    start: Optional[str]
+    end: Optional[str]
     days: Optional[list]
 
     class Config:
@@ -74,7 +77,8 @@ class UpdateEventModel(BaseModel):
             "example": {
                 "name": "CSE 310",
                 "place": "B108",
-                "time": "10:30-11:50",
+                "start": "10:30",
+                "end": "11:50",
                 "days": ["Monday", "Tuesday"],
             }
         }

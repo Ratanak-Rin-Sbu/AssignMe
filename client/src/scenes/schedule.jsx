@@ -4,6 +4,7 @@ import FlexBetween from "components/FlexBetween";
 import ScheduleWrapper from "components/scheduleWrapper";
 import { Button } from 'react-bootstrap';
 import { useState } from "react";
+import ToggleDays from "components/dayToggle";
 
 const Schedule = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -76,58 +77,35 @@ const Schedule = () => {
             }}
           >
             <input
+              className="myschedule-modal-input"
               type="text"
-              style={{
-                width: "100%",
-                border: 0,
-                borderBottom: "2px solid gray",
-                outline: 0,
-                fontSize: "1rem",
-                padding: "7px 0",
-                background: "transparent",
-                transition: "border-color 0.2s",
-                marginBottom: "15px",
-              }}
               placeholder="Event Name"
             />
             <input
+              className="myschedule-modal-input"
               type="text"
-              style={{
-                width: "100%",
-                border: 0,
-                borderBottom: "2px solid gray",
-                outline: 0,
-                fontSize: "1rem",
-                padding: "7px 0",
-                background: "transparent",
-                transition: "border-color 0.2s",
-                marginBottom: "15px",
-              }}
               placeholder="Location"
             />
-            <input
-              type="text"
-              style={{
-                width: "100%",
-                border: 0,
-                borderBottom: "2px solid gray",
-                outline: 0,
-                fontSize: "1rem",
-                padding: "7px 0",
-                background: "transparent",
-                transition: "border-color 0.2s",
-                marginBottom: "15px",
-              }}
-              placeholder="Time"
-            />
-            <FlexBetween mr="89%">
-              <button
-                className="btn-add"
-                onClick={() => {setOpenModal(false)}}
-              >
-                ADD EVENT
-              </button>
+            <FlexBetween>
+              <input
+                className="myschedule-modal-input"
+                type="text"
+                placeholder="Start time"
+                style={{marginRight: "10px"}}
+              />
+              <input
+                className="myschedule-modal-input"
+                type="text"
+                placeholder="End Time"
+              />
             </FlexBetween>
+            <ToggleDays />
+            <button
+              className="btn-add"
+              onClick={() => {setOpenModal(false)}}
+            >
+              ADD EVENT
+            </button>
           </Box>
         </Modal>
       </Box>
