@@ -47,6 +47,7 @@ class Event(BaseModel):
     place: str
     start: str
     end: str
+    color: str
     days: list
 
     class Config:
@@ -59,6 +60,7 @@ class Event(BaseModel):
                 "place": "B108",
                 "start": "10:30",
                 "end": "11:50",
+                "color": "#FDD36A",
                 "days": ["Monday", "Tuesday"],
             }
         }
@@ -68,6 +70,7 @@ class UpdateEventModel(BaseModel):
     place: Optional[str]
     start: Optional[str]
     end: Optional[str]
+    color: Optional[str]
     days: Optional[list]
 
     class Config:
@@ -79,6 +82,7 @@ class UpdateEventModel(BaseModel):
                 "place": "B108",
                 "start": "10:30",
                 "end": "11:50",
+                "color": "#FDD36A",
                 "days": ["Monday", "Tuesday"],
             }
         }

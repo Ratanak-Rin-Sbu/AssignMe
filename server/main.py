@@ -154,6 +154,8 @@ async def update_event(id: PyObjectId, event: UpdateEventModel):
         await collection2.update_one({"id": id}, {"$set": {"start": event.start}})
     if event.end != None:
         await collection2.update_one({"id": id}, {"$set": {"end": event.end}})
+    if event.color != None:
+        await collection2.update_one({"id": id}, {"$set": {"color": event.color}})
     if event.days != None:
         await collection2.update_one({"id": id}, {"$set": {"days": event.days}})
     document = await collection2.find_one({"id": id})
