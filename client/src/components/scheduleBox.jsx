@@ -1,18 +1,43 @@
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
+import { useState } from "react";
 
-const ScheduleBox = ({ text }) => {
-  return <Typography
-    sx={{
-      width: "150px",
-      // height: "50px",
-      border: "2px solid black",
-      textAlign: "center",
-      verticalAlign: "center",
-      // padding: "38px 10px"
-    }}
-  >
-    {text}
-  </Typography>
+const ScheduleBox = ({ text, height, color }) => {
+  // const [boxHeight, setBoxHeight] = useState(30);
+  if (!height && !color) {
+    return (
+      <div 
+        style={{
+          // backgroundColor: {color},
+          width: "150px",
+          height: "30px",
+          borderRight: "2px solid black",
+          borderBottom: "2px solid black",
+          borderTop: "2px solid black",
+          textAlign: "center",
+          verticalAlign: "center",
+        }}
+      >
+        {text}
+      </div>
+    )
+  } else {
+    return (
+      <div 
+        style={{
+          backgroundColor: `${color}`,
+          width: "150px",
+          height: {height},
+          borderRight: "2px solid black",
+          borderBottom: "2px solid black",
+          borderTop: "2px solid black",
+          textAlign: "center",
+          verticalAlign: "center",
+        }}
+      >
+        {text}
+      </div>
+    )
+  }
 }
 
 export default ScheduleBox;
