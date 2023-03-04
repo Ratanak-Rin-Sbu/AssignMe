@@ -1,7 +1,7 @@
 import ScheduleBox from "./scheduleBox";
 import FlexBetween from "./FlexBetween";
 
-const ScheduleDayTime = () => {
+const ScheduleDayTime = ({ events }) => {
   return (
     <>
       <FlexBetween flexDirection="column">

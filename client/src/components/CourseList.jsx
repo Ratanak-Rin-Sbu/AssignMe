@@ -25,7 +25,7 @@ const CourseList = () => {
 
   useEffect(() => {
     getTasks()
-  }, [])
+  }, [tasks])
 
   const addTask = async () => {
     if (subject && desc && deadline) {
@@ -43,7 +43,6 @@ const CourseList = () => {
       }).then((response) => {
         console.log('task created');
       });
-      window.location.reload();
     };
   };
 

@@ -70,7 +70,6 @@ const Course = ({ para, task }) => {
     }).then((response) => {
       console.log("Deleted a task");
     })
-    window.location.reload();
   };
 
   if (typeof(para) === "boolean") {

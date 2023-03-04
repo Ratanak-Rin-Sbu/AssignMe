@@ -58,8 +58,8 @@ class Event(BaseModel):
             "example": {
                 "name": "CSE 310",
                 "place": "B108",
-                "start": "10:30",
-                "end": "11:50",
+                "start": "7:00",
+                "end": "8:00",
                 "color": "#FDD36A",
                 "days": ["Monday", "Tuesday"],
             }
@@ -80,8 +80,8 @@ class UpdateEventModel(BaseModel):
             "example": {
                 "name": "CSE 310",
                 "place": "B108",
-                "start": "10:30",
-                "end": "11:50",
+                "start": "7:00",
+                "end": "8:00",
                 "color": "#FDD36A",
                 "days": ["Monday", "Tuesday"],
             }

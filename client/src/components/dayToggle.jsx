@@ -79,6 +79,7 @@ const StyledToggle = withStyles({
 
 const ToggleDays = () => {
   const [days, setDays] = useState([]);
+  console.log(days);
   return (
     <>
       <input
