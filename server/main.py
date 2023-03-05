@@ -1,9 +1,19 @@
 import motor.motor_asyncio
-from fastapi import FastAPI, HTTPException, Request
-from model import Todo, UpdateTodoModel, Event, UpdateEventModel
+from fastapi import FastAPI, HTTPException, Depends, Request, status
+from model import Todo, UpdateTodoModel, Event, UpdateEventModel, User, Login, Token, TokenData
 from fastapi import Body
 from PyObjectId import PyObjectId
 from fastapi.middleware.cors import CORSMiddleware
+
+# authentication
+from typing import Optional
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from hashing import Hash
+from jwttoken import create_access_token
+from oauth import get_current_user
+from fastapi.security import OAuth2PasswordRequestForm
+
 app = FastAPI()
 
 # DATABASE SETUP
@@ -14,6 +24,9 @@ collection = database.todo
 # Event DB
 database2 = client.EventList
 collection2 = database2.event
+# User DB
+database3 = client.Users
+collection3 = database3.user
 
 # what is a middleware? 
 # software that acts as a bridge between an operating system or database and applications, especially on a network.
@@ -36,6 +49,27 @@ app.add_middleware(
 async def read_root():
     return {"Hello": "World"}
 
+#  USER AUTHENTICATION
+@app.post("/api/register")
+def create_user(request:User):
+	hashed_pass = Hash.bcrypt(request.password)
+	user_object = dict(request)
+	user_object["password"] = hashed_pass
+	user_id = database3["users"].insert(user_object)
+	# print(user)
+	return {"res":"created"}
+
+@app.post("/api/login")
+def login(request:OAuth2PasswordRequestForm = Depends()):
+	user = database3["users"].find_one({"username": request.username})
+	if not user:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'No user found with this {request.username} username')
+	if not Hash.verify(user["password"], request.password):
+		raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f'Wrong Username or password')
+	access_token = create_access_token(data = { "sub": user["username"] })
+	return {"access_token": access_token, "token_type": "bearer" }
+
+# TASK MANAGER
 # GET ONE TASK
 async def fetch_one_todo(id):
     document = await collection.find_one({"id": id})
