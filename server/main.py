@@ -1,6 +1,6 @@
 import motor.motor_asyncio
 from fastapi import FastAPI, HTTPException, Depends, Request, status
-from model import Todo, UpdateTodoModel, Event, UpdateEventModel, User, Login, Token, TokenData
+from model import Todo, UpdateTodoModel, Event, UpdateEventModel, Note, UpdateNoteModel, User, Login, Token, TokenData
 from fastapi import Body
 from PyObjectId import PyObjectId
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,14 +19,17 @@ app = FastAPI()
 # DATABASE SETUP
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://jassonrin:stfuimissHER0730@cluster0.4wfy1nc.mongodb.net/?retryWrites=true&w=majority')
 # Todo DB
-database = client.TodoList
-collection = database.todo
+todoDB = client.TodoList
+todoCollection = todoDB.todo
 # Event DB
-database2 = client.EventList
-collection2 = database2.event
+eventDB = client.EventList
+eventCollection = eventDB.event
+# Note DB
+noteDB = client.NoteList
+noteCollection = noteDB.note
 # User DB
-database3 = client.Users
-collection3 = database3.user
+userDB = client.Users
+userCollection = userDB.user
 
 # what is a middleware? 
 # software that acts as a bridge between an operating system or database and applications, especially on a network.
@@ -46,8 +49,8 @@ app.add_middleware(
 
 # ROUTES
 @app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+def read_root(current_user:User = Depends(get_current_user)):
+	return {"data":"Hello World"}
 
 #  USER AUTHENTICATION
 @app.post("/api/register")
@@ -55,13 +58,13 @@ def create_user(request:User):
 	hashed_pass = Hash.bcrypt(request.password)
 	user_object = dict(request)
 	user_object["password"] = hashed_pass
-	user_id = database3["users"].insert(user_object)
+	user_id = userCollection.insert(user_object)
 	# print(user)
 	return {"res":"created"}
 
 @app.post("/api/login")
 def login(request:OAuth2PasswordRequestForm = Depends()):
-	user = database3["users"].find_one({"username": request.username})
+	user = userCollection.find_one({"username": request.username})
 	if not user:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'No user found with this {request.username} username')
 	if not Hash.verify(user["password"], request.password):
@@ -72,7 +75,7 @@ def login(request:OAuth2PasswordRequestForm = Depends()):
 # TASK MANAGER
 # GET ONE TASK
 async def fetch_one_todo(id):
-    document = await collection.find_one({"id": id})
+    document = await todoCollection.find_one({"id": id})
     return document
 
 @app.get("/api/todo/{id}", response_model=Todo)
@@ -85,7 +88,7 @@ async def get_todo_by_id(id: PyObjectId):
 # GET ALL TASKS
 async def fetch_all_todos():
     todos = []
-    cursor = collection.find({})
+    cursor = todoCollection.find({})
     async for document in cursor:
         todos.append(Todo(**document))
     return todos
@@ -98,7 +101,7 @@ async def get_todo():
 # CREATE A TASK
 async def create_todo(todo):
     document = todo
-    result = await collection.insert_one(document)
+    result = await todoCollection.insert_one(document)
     return document
 
 @app.post("/api/todo", response_model=Todo)
@@ -111,14 +114,14 @@ async def post_todo(todo: Todo):
 # UPDATE A TASK (STATUS ONLY FOR NOW)
 async def update_todo(id: PyObjectId, todo: UpdateTodoModel):
     if todo.subject != None:
-        await collection.update_one({"id": id}, {"$set": {"subject": todo.subject}})
+        await todoCollection.update_one({"id": id}, {"$set": {"subject": todo.subject}})
     if todo.description != None:
-        await collection.update_one({"id": id}, {"$set": {"description": todo.description}})
+        await todoCollection.update_one({"id": id}, {"$set": {"description": todo.description}})
     if todo.deadline != None:
-        await collection.update_one({"id": id}, {"$set": {"deadline": todo.deadline}})
+        await todoCollection.update_one({"id": id}, {"$set": {"deadline": todo.deadline}})
     if todo.status != None:
-        await collection.update_one({"id": id}, {"$set": {"status": todo.status}})
-    document = await collection.find_one({"id": id})
+        await todoCollection.update_one({"id": id}, {"$set": {"status": todo.status}})
+    document = await todoCollection.find_one({"id": id})
     return document
 
 @app.put("/api/todo/{id}", response_model=Todo)
@@ -130,7 +133,7 @@ async def put_todo(id: PyObjectId, todo: UpdateTodoModel):
 
 # DELETE A TASK
 async def remove_todo(id: PyObjectId):
-    await collection.delete_one({"id": id})
+    await todoCollection.delete_one({"id": id})
     return True
 
 @app.delete("/api/todo/{id}")
@@ -140,9 +143,10 @@ async def delete_todo(id: PyObjectId):
         return "Successfully deleted todo"
     raise HTTPException(404, f"There is no todo with the id {id}")
 
+# EVENT
 # GET ONE EVENT
 async def fetch_one_event(id):
-    document = await collection2.find_one({"id": id})
+    document = await eventCollection.find_one({"id": id})
     return document
 
 @app.get("/api/event/{id}", response_model=Event)
@@ -155,7 +159,7 @@ async def get_event_by_id(id: PyObjectId):
 # GET ALL EVENTS
 async def fetch_all_events():
     events = []
-    cursor = collection2.find({})
+    cursor = eventCollection.find({})
     async for document in cursor:
         events.append(Event(**document))
     return events
@@ -168,7 +172,7 @@ async def get_events():
 # CREATE AN EVENT
 async def create_event(event):
     document = event
-    result = await collection2.insert_one(document)
+    result = await eventCollection.insert_one(document)
     return document
 
 @app.post("/api/event", response_model=Event)
@@ -181,18 +185,18 @@ async def post_event(event: Event):
 # UPDATE AN EVENT
 async def update_event(id: PyObjectId, event: UpdateEventModel):
     if event.name != None:
-        await collection2.update_one({"id": id}, {"$set": {"name": event.name}})
+        await eventCollection.update_one({"id": id}, {"$set": {"name": event.name}})
     if event.place != None:
-        await collection2.update_one({"id": id}, {"$set": {"place": event.place}})
+        await eventCollection.update_one({"id": id}, {"$set": {"place": event.place}})
     if event.start != None:
-        await collection2.update_one({"id": id}, {"$set": {"start": event.start}})
+        await eventCollection.update_one({"id": id}, {"$set": {"start": event.start}})
     if event.end != None:
-        await collection2.update_one({"id": id}, {"$set": {"end": event.end}})
+        await eventCollection.update_one({"id": id}, {"$set": {"end": event.end}})
     if event.color != None:
-        await collection2.update_one({"id": id}, {"$set": {"color": event.color}})
+        await eventCollection.update_one({"id": id}, {"$set": {"color": event.color}})
     if event.days != None:
-        await collection2.update_one({"id": id}, {"$set": {"days": event.days}})
-    document = await collection2.find_one({"id": id})
+        await eventCollection.update_one({"id": id}, {"$set": {"days": event.days}})
+    document = await eventCollection.find_one({"id": id})
     return document
 
 @app.put("/api/event/{id}", response_model=Event)
@@ -204,7 +208,7 @@ async def put_event(id: PyObjectId, event: UpdateEventModel):
 
 # DELETE A EVENT
 async def remove_event(id: PyObjectId):
-    await collection2.delete_one({"id": id})
+    await eventCollection.delete_one({"id": id})
     return True
 
 @app.delete("/api/event/{id}")
@@ -213,3 +217,74 @@ async def delete_event(id: PyObjectId):
     if response:
         return "Successfully deleted event"
     raise HTTPException(404, f"There is no event with the id {id}")
+
+# Note
+# GET ONE Note
+async def fetch_one_note(id):
+    document = await noteCollection.find_one({"id": id})
+    return document
+
+@app.get("/api/note/{id}", response_model=Todo)
+async def get_note_by_id(id: PyObjectId):
+    response = await fetch_one_note(id)
+    if response:
+        return response
+    raise HTTPException(404, f"There is no note with the id {id}")
+
+# GET ALL notes
+async def fetch_all_notes():
+    notes = []
+    cursor = noteCollection.find({})
+    async for document in cursor:
+        notes.append(Note(**document))
+    return notes
+
+@app.get("/api/notes")
+async def get_note():
+    response = await fetch_all_notes()
+    return response
+
+# CREATE A Note
+async def create_note(note):
+    document = note
+    result = await noteCollection.insert_one(document)
+    return document
+
+@app.post("/api/note", response_model=Note)
+async def post_note(note: Note):
+    response = await create_note(note.dict())
+    if response:
+        return response
+    raise HTTPException(400, "Something went wrong")
+
+# UPDATE A Note (STATUS ONLY FOR NOW)
+async def update_note(id: PyObjectId, note: UpdateNoteModel):
+    if note.subject != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"subject": note.subject}})
+    if note.description != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"description": note.description}})
+    if note.deadline != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"deadline": note.deadline}})
+    if note.status != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"status": note.status}})
+    document = await noteCollection.find_one({"id": id})
+    return document
+
+@app.put("/api/note/{id}", response_model=Note)
+async def put_note(id: PyObjectId, note: UpdateNoteModel):
+    response = await update_note(id, note)
+    if response:
+        return response
+    raise HTTPException(404, f"There is no note with the id {id}")
+
+# DELETE A Note
+async def remove_note(id: PyObjectId):
+    await noteCollection.delete_one({"id": id})
+    return True
+
+@app.delete("/api/note/{id}")
+async def delete_note(id: PyObjectId):
+    response = await remove_note(id)
+    if response:
+        return "Successfully deleted note"
+    raise HTTPException(404, f"There is no note with the id {id}")

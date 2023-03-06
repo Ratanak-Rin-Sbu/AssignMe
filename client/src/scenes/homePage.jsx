@@ -1,4 +1,4 @@
-import { Assignment, EventNote } from "@mui/icons-material";
+import { Assignment, EventNote, NoteAlt } from "@mui/icons-material";
 import FlexBetween from "components/FlexBetween";
 import NavBar from "components/NavBar";
 import { Box } from "@mui/system";
@@ -51,7 +51,7 @@ const HomePage = () => {
             borderRadius: "23px",
             border: "1px solid lightpink",
             // backgroundColor: "red",
-            margin: "auto",
+            margin: "auto auto 20px auto",
             padding: "20px",
             width: "100%",
             height: "80px",

@@ -87,6 +87,42 @@ class UpdateEventModel(BaseModel):
             }
         }
 
+class Note(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
+    note: str
+    tags: list
+    lastUpdated: str
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "note": "This is my note.",
+                "tags": ["React", "MongoDB", "ExpressJS"],
+                "lastUpdated": "3/06/2023, 8:04:23 AM",
+            }
+        }
+
+class UpdateNoteModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
+    note: Optional[str]
+    tags: Optional[list]
+    lastUpdated: Optional[str]
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "note": "This is my note.",
+                "tags": ["React", "MongoDB", "ExpressJS"],
+                "lastUpdated": "3/06/2023, 8:04:23 AM",
+            }
+        }
+
 class User(BaseModel):
     username: str
     company: str
