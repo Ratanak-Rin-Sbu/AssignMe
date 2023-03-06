@@ -72,6 +72,34 @@ const HomePage = () => {
             My Schedule
           </FlexBetween>
         </Box>
+
+        {/* THIRD ROW - MY NOTE */}
+        <Box
+          sx={{
+            borderRadius: "23px",
+            border: "1px solid lightpink",
+            // backgroundColor: "red",
+            margin: "auto",
+            padding: "20px",
+            width: "100%",
+            height: "80px",
+            fontSize: "27px",
+            '&:hover': {
+              backgroundColor: "#E7556E",
+              opacity: [0.9, 0.8, 0.7],
+              cursor: "pointer"
+            },
+        }}
+        onClick={() => navigate('/note')}
+        >
+        <FlexBetween justifyContent="flex-start !important">
+          <NoteAlt style={{
+            fontSize: "42px",
+            marginRight: "25px"
+          }}/>
+          My Note
+        </FlexBetween>
+        </Box>
       </div>
       {/* <TaskManager /> */}
     </>
