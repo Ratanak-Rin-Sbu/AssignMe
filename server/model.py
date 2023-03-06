@@ -92,6 +92,7 @@ class Note(BaseModel):
     note: str
     tags: list
     lastUpdated: str
+    active: bool
 
     class Config:
         allow_population_by_field_name = True
@@ -102,6 +103,7 @@ class Note(BaseModel):
                 "note": "This is my note.",
                 "tags": ["React", "MongoDB", "ExpressJS"],
                 "lastUpdated": "3/06/2023, 8:04:23 AM",
+                "active": True
             }
         }
 
@@ -110,6 +112,7 @@ class UpdateNoteModel(BaseModel):
     note: Optional[str]
     tags: Optional[list]
     lastUpdated: Optional[str]
+    active: Optional[bool]
 
     class Config:
         allow_population_by_field_name = True
@@ -120,6 +123,7 @@ class UpdateNoteModel(BaseModel):
                 "note": "This is my note.",
                 "tags": ["React", "MongoDB", "ExpressJS"],
                 "lastUpdated": "3/06/2023, 8:04:23 AM",
+                "active": True
             }
         }
 

@@ -259,14 +259,14 @@ async def post_note(note: Note):
 
 # UPDATE A Note (STATUS ONLY FOR NOW)
 async def update_note(id: PyObjectId, note: UpdateNoteModel):
-    if note.subject != None:
-        await noteCollection.update_one({"id": id}, {"$set": {"subject": note.subject}})
-    if note.description != None:
-        await noteCollection.update_one({"id": id}, {"$set": {"description": note.description}})
-    if note.deadline != None:
-        await noteCollection.update_one({"id": id}, {"$set": {"deadline": note.deadline}})
-    if note.status != None:
-        await noteCollection.update_one({"id": id}, {"$set": {"status": note.status}})
+    if note.note != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"note": note.note}})
+    if note.tags != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"tags": note.tags}})
+    if note.lastUpdated != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"lastUpdated": note.lastUpdated}})
+    if note.active != None:
+        await noteCollection.update_one({"id": id}, {"$set": {"active": note.active}})
     document = await noteCollection.find_one({"id": id})
     return document
 
