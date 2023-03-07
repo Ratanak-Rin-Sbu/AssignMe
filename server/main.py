@@ -257,7 +257,7 @@ async def post_note(note: Note):
         return response
     raise HTTPException(400, "Something went wrong")
 
-# UPDATE A Note (STATUS ONLY FOR NOW)
+# UPDATE A Note
 async def update_note(id: PyObjectId, note: UpdateNoteModel):
     if note.note != None:
         await noteCollection.update_one({"id": id}, {"$set": {"note": note.note}})
