@@ -1,23 +1,28 @@
 import motor.motor_asyncio
+import asyncio
+import motor.core
 from fastapi import FastAPI, HTTPException, Depends, Request, status
-from model import Todo, UpdateTodoModel, Event, UpdateEventModel, Note, UpdateNoteModel, User, Login, Token, TokenData
+from model import Todo, UpdateTodoModel, Event, UpdateEventModel, Note, UpdateNoteModel
+from models.user_model import User, TokenSchema, TokenPayload
 from fastapi import Body
 from PyObjectId import PyObjectId
 from fastapi.middleware.cors import CORSMiddleware
 
 # authentication
-from typing import Optional
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from hashing import Hash
-from jwttoken import create_access_token
-from oauth import get_current_user
+from typing import Any, Optional
 from fastapi.security import OAuth2PasswordRequestForm
+from core.config import settings
+from core.security import get_password, verify_password, create_access_token, create_refresh_token
+from jose import jwt
+from fastapi.security import OAuth2PasswordBearer
+from datetime import datetime
+from pydantic import ValidationError
 
 app = FastAPI()
 
 # DATABASE SETUP
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://jassonrin:stfuimissHER0730@cluster0.4wfy1nc.mongodb.net/?retryWrites=true&w=majority')
+client.get_io_loop = asyncio.get_running_loop
 # Todo DB
 todoDB = client.TodoList
 todoCollection = todoDB.todo
@@ -28,7 +33,7 @@ eventCollection = eventDB.event
 noteDB = client.NoteList
 noteCollection = noteDB.note
 # User DB
-userDB = client.Users
+userDB = client.UserList
 userCollection = userDB.user
 
 # what is a middleware? 
@@ -49,28 +54,106 @@ app.add_middleware(
 
 # ROUTES
 @app.get("/")
-def read_root(current_user:User = Depends(get_current_user)):
+def read_root():
 	return {"data":"Hello World"}
 
-#  USER AUTHENTICATION
-@app.post("/api/register")
-def create_user(request:User):
-	hashed_pass = Hash.bcrypt(request.password)
-	user_object = dict(request)
-	user_object["password"] = hashed_pass
-	user_id = userCollection.insert(user_object)
-	# print(user)
-	return {"res":"created"}
+# USER
+# TOKEN
+reuseable_oauth = OAuth2PasswordBearer(
+    tokenUrl = "/login",
+    scheme_name = "JWT"
+)
 
-@app.post("/api/login")
-def login(request:OAuth2PasswordRequestForm = Depends()):
-	user = userCollection.find_one({"username": request.username})
-	if not user:
-		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'No user found with this {request.username} username')
-	if not Hash.verify(user["password"], request.password):
-		raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f'Wrong Username or password')
-	access_token = create_access_token(data = { "sub": user["username"] })
-	return {"access_token": access_token, "token_type": "bearer" }
+async def get_current_user(token: str = Depends(reuseable_oauth)) -> User:
+    try:
+        payload = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms = [settings.ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+          raise HTTPException (
+              status_code = status.HTTP_401_UNAUTHORIZED,
+              detail = "Token expired",
+              headers = {"WWW-Authenticate": "Bearer"},
+          )
+    except(jwt.JWTError, ValidationError):
+      raise HTTPException (
+            status_code = status.HTTP_403_FORBIDDEN,
+            detail = "Could not validate credentials",
+            headers = {"WWW-Authenticate": "Bearer"},
+        )
+    user = await userCollection.find_one({'id': {'$eq': token_data.sub}})
+
+    if not user:
+        raise HTTPException(404, "Could not find user")
+    
+    return user
+
+# REGISTER USER
+async def create_user(user):
+    document = user
+    result = await userCollection.insert_one(document)
+    return document
+
+@app.post("/api/user", response_model=User)
+async def post_user(user: User):
+    existed_username = await userCollection.find_one({'username': {'$eq': user.username}})
+    existed_email = await userCollection.find_one({'email': {'$eq': user.email}})
+    if existed_username or existed_email:
+        raise HTTPException(403, "Username or email already exists")
+    else:
+        user = user.dict()
+        user["hashed_password"] = get_password(user["hashed_password"])
+        response = await create_user(user)
+        if response:
+            return response
+        else:
+            raise HTTPException(400, "Something went wrong")
+        
+# LOGIN
+async def authenticate(email: str, password: str) -> Optional[User]:
+    user = await userCollection.find_one({'email': {'$eq': email}})
+    if not user:
+        return None
+    if not verify_password(password=password, hashed_pass=user["hashed_password"]):
+        return None
+    return user
+
+@app.post("/login", summary="Create access and refresh tokens for user", response_model=TokenSchema)
+async def login(form: OAuth2PasswordRequestForm = Depends()) -> Any:
+    user = await authenticate(email=form.username, password=form.password)
+    if not user:
+        raise HTTPException(400, "Incorrect email or password")
+    return {
+        "access_token": create_access_token(user["id"]),
+        "refresh_token": create_refresh_token(user["id"]),
+    }
+
+@app.post("/test-token", summary="Test is the access token is valid", response_model=User)
+async def test_token(user: User = Depends(get_current_user)):
+    return user
+
+@app.post('/refresh', summary="Refresh token", response_model=TokenSchema)
+async def refresh_token(refresh_token: str = Body(...)):
+    try:
+        payload = jwt.decode(
+            refresh_token, settings.JWT_REFRESH_SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = await userCollection.find_one({'id': {'$eq': token_data.sub}})
+    if not user:
+        raise HTTPException(404, "Invalid token for user")
+    return {
+        "access_token": create_access_token(user["id"]),
+        "refresh_token": create_refresh_token(user["id"]),
+    }
 
 # TASK MANAGER
 # GET ONE TASK

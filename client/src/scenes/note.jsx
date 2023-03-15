@@ -19,6 +19,7 @@ const Note = () => {
   let activeNote = notes.filter((note) => {return (note.active === true)});
 
   const setActive = async (note) => {
+    console.log(note)
     await fetch(`http://localhost:8000/api/note/${note.id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
@@ -113,6 +114,15 @@ const Note = () => {
 
   const debounceOnChange = debounce(updateNote, 500);
 
+  const deleteNote = async () => {
+    await fetch(`http://localhost:8000/api/note/${activeNote[0].id}`, {
+      method: 'DELETE',
+    }).then((response) => {
+      console.log("Deleted a task");
+    });
+    setActive(sortedNotes[1]);
+  };
+
   return (
     <>
       <NavBar />
@@ -185,7 +195,7 @@ const Note = () => {
             >
               <NotificationAdd style={{fontSize: 30}}/>
               <PersonAddAlt style={{fontSize: 30}}/>
-              <Delete style={{fontSize: 30}}/>
+              <Delete style={{fontSize: 30}} onClick={deleteNote}/>
             </FlexBetween>
 
             {notes.map((note) => {
@@ -194,6 +204,7 @@ const Note = () => {
                   style={{
                     border: "none",
                     outline: "none",
+                    resize: "none",
                     background: "transparent",
                     fontSize: "18px",
                     padding: "10px",
