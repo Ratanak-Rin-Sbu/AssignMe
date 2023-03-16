@@ -3,12 +3,14 @@ from pydantic import BaseModel, Field
 from PyObjectId import PyObjectId
 from typing import Optional
 
+# TASK MODEL
 class Todo(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
     subject: str
     description: str
     deadline: str
     status: bool
+    owner_id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
 
     class Config:
         allow_population_by_field_name = True
@@ -41,6 +43,7 @@ class UpdateTodoModel(BaseModel):
             }
         }
 
+# EVENT MODEL
 class Event(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
     name: str
@@ -49,6 +52,7 @@ class Event(BaseModel):
     end: str
     color: str
     days: list
+    owner_id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
 
     class Config:
         allow_population_by_field_name = True
@@ -87,12 +91,14 @@ class UpdateEventModel(BaseModel):
             }
         }
 
+# Note MODEL
 class Note(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
     note: str
     tags: list
     lastUpdated: str
     active: bool
+    owner_id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
 
     class Config:
         allow_population_by_field_name = True

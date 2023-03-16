@@ -6,7 +6,6 @@ from datetime import datetime
 
 class User(BaseModel):
   id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
-  # username: str =  Field(unique=True)
   username: Indexed(str, unique=True)
   email: Indexed(EmailStr, unique=True)
   hashed_password: str
