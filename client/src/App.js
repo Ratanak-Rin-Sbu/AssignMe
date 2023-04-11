@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "scenes/homePage";
+import Login from "scenes/login"
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -20,7 +21,8 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/taskManager" element={<TaskManager />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/note" element={<Note />} />

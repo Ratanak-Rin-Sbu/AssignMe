@@ -8,7 +8,8 @@ class User(BaseModel):
   id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
   username: Indexed(str, unique=True)
   email: Indexed(EmailStr, unique=True)
-  hashed_password: str
+  password: str
+  picture: str
 
   class Config:
     allow_population_by_field_name = True
@@ -18,7 +19,8 @@ class User(BaseModel):
         "example": {
             "username": "Jasson Rin",
             "email": "user@example.com",
-            "hashed_password": "123",
+            "password": "123",
+            "picture": "thisIsThePicturePathLink"
         }
     }
 

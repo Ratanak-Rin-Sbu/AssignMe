@@ -6,6 +6,7 @@ from pydantic import AnyHttpUrl, BaseSettings
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api"
+    DB_URL: str = config("DB_URL", cast=str)
     JWT_SECRET_KEY: str = config("JWT_SECRET_KEY", cast=str)
     JWT_REFRESH_SECRET_KEY: str = config("JWT_REFRESH_SECRET_KEY", cast=str)
     ALGORITHM = "HS256"

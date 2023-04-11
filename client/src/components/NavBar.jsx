@@ -43,10 +43,9 @@ const NavBar = () => {
       <Typography
         fontWeight="bold"
         fontSize="clamp(1rem, 2rem, 2.25rem)"
-        style={{color: "rgb(55, 53, 47)"}}
+        // style={{color: "#FF74B1"}}
         sx={{
           "&:hover": {
-            color: primaryLight,
             cursor: "pointer",
             },
         }}

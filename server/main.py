@@ -18,7 +18,9 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime
 from pydantic import ValidationError
 
-app = FastAPI()
+app = FastAPI(
+    title="AssignME",
+)
 
 # DATABASE SETUP
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://jassonrin:stfuimissHER0730@cluster0.4wfy1nc.mongodb.net/?retryWrites=true&w=majority')
@@ -96,15 +98,16 @@ async def create_user(user):
     result = await userCollection.insert_one(document)
     return document
 
-@app.post("/api/user", response_model=User)
+@app.post("/user", response_model=User)
 async def post_user(user: User):
+    print("hehe")
     existed_username = await userCollection.find_one({'username': {'$eq': user.username}})
     existed_email = await userCollection.find_one({'email': {'$eq': user.email}})
     if existed_username or existed_email:
         raise HTTPException(403, "Username or email already exists")
     else:
         user = user.dict()
-        user["hashed_password"] = get_password(user["hashed_password"])
+        user["password"] = get_password(user["password"])
         response = await create_user(user)
         if response:
             return response
@@ -116,7 +119,7 @@ async def authenticate(email: str, password: str) -> Optional[User]:
     user = await userCollection.find_one({'email': {'$eq': email}})
     if not user:
         return None
-    if not verify_password(password=password, hashed_pass=user["hashed_password"]):
+    if not verify_password(password=password, hashed_pass=user["password"]):
         return None
     return user
 
