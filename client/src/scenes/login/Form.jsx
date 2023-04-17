@@ -49,6 +49,8 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
+  const [isInvalidInput, setIsInvalidInput] = useState(false);
+
   const register = async (values, onSubmitProps) => {
     // using formData because we need to send form infos with an image
     // const formData = new FormData();
@@ -94,21 +96,8 @@ const Form = () => {
         password: values.password,
       })
     });
-    // .then((response) => {
-    //   if (response.status === 200) {
-    //     dispatch(
-    //       setLogin({
-    //         user: loggedInResponse.user,
-    //         token: loggedInResponse.token,
-    //       })
-    //     );
-    //     navigate("/home");
-    //     console.log("Hi");
-    //   }
-    // });
     onSubmitProps.resetForm();
     const loggedIn = await loggedInResponse.json();
-    console.log(loggedIn['access_token']);
     if (loggedIn['access_token'] !== undefined) {
       dispatch(
         setLogin({
@@ -116,36 +105,12 @@ const Form = () => {
           token: loggedIn.token,
         })
       );
+      setIsInvalidInput(false);
       navigate("/home");
+    } else {
+      setIsInvalidInput(true);
     }
   };
-
-  // const login = async (values, onSubmitProps) => {
-  //   const loggedInResponse = await fetch("http://localhost:8000/login", {
-  //     headers: {
-  //       'Content-Type': 'application/json; charset=UTF-8'
-  //     },
-  //     method: "POST",
-  //     // body: JSON.stringify(values),
-  //     body: JSON.stringify({
-  //       email: values.email,
-  //       password: values.password,
-  //     })
-  //   }).then((response) => {
-  //     if (response.status === 200) {
-  //       console.log(loggedInResponse);
-  //       dispatch(
-  //         setLogin({
-  //           user: loggedInResponse.user,
-  //           token: loggedInResponse.token,
-  //         })
-  //       );
-  //       navigate("/home");
-  //     }
-  //   });
-  //   // const loggedIn = await loggedInResponse.json();
-  //   onSubmitProps.resetForm();
-  // };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -249,6 +214,12 @@ const Form = () => {
               sx={{ gridColumn: "span 4" }}
             />
           </Box>
+
+          {isInvalidInput && (
+            <Typography color="red" fontStyle="italic" marginTop="20px" marginLeft="10px">
+              Invalid credentials
+            </Typography>
+          )}
 
           {/* BUTTONS */}
           <Box>
