@@ -46,6 +46,22 @@ class User(BaseModel):
   async def by_email(self, email: str) -> "User":
     return await self.find_one(self.email == email)
   
+class UserOut(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="id")
+    email: EmailStr
+    password: str
+
+    class Config:
+      allow_population_by_field_name = True
+      arbitrary_types_allowed = True
+      json_encoders = {ObjectId: str}
+      schema_extra = {
+          "example": {
+              "email": "user@example.com",
+              "password": "123",
+          }
+      }
+  
 class TokenSchema(BaseModel):
   access_token: str
   refresh_token: str

@@ -3,6 +3,8 @@ import axiosInstance from "../services/axios";
 import { validateToken } from "../utils/jwt";
 import { resetSession, setSession } from "../utils/session.js";
 
+import { useNavigate } from "react-router-dom";
+
 const initialState = {
   isAuthenticated: false,
   isInitialized: false,
@@ -52,6 +54,8 @@ export const AuthProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const isMounted = useRef(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (isMounted.current) return;
     const initialize = async () => {
@@ -60,7 +64,7 @@ export const AuthProvider = (props) => {
         if (accessToken && validateToken(accessToken)) {
           setSession(accessToken);
 
-          const response = await axiosInstance.get("/users/me");
+          const response = await axiosInstance.get("/me");
           const { data: user } = response;
           dispatch({
             type: "INITIALIZE",
@@ -107,8 +111,9 @@ export const AuthProvider = (props) => {
 
   const login = async (email, password) => {
     try {
+      console.log("Hi");
       await getTokens(email, password);
-      const response = await axiosInstance.get("/users/me");
+      const response = await axiosInstance.get("/me");
       const { data: user } = response;
       dispatch({
         type: "LOGIN",
@@ -116,6 +121,7 @@ export const AuthProvider = (props) => {
           user,
         },
       });
+      navigate("/home");
     } catch (err) {
       return Promise.reject(err);
     }

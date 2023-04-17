@@ -3,7 +3,7 @@ import asyncio
 import motor.core
 from fastapi import FastAPI, HTTPException, Depends, Request, status
 from model import Todo, UpdateTodoModel, Event, UpdateEventModel, Note, UpdateNoteModel
-from models.user_model import User, TokenSchema, TokenPayload
+from models.user_model import User, UserOut, TokenSchema, TokenPayload
 from fastapi import Body
 from PyObjectId import PyObjectId
 from fastapi.middleware.cors import CORSMiddleware
@@ -100,7 +100,6 @@ async def create_user(user):
 
 @app.post("/user", response_model=User)
 async def post_user(user: User):
-    print("hehe")
     existed_username = await userCollection.find_one({'username': {'$eq': user.username}})
     existed_email = await userCollection.find_one({'email': {'$eq': user.email}})
     if existed_username or existed_email:
@@ -124,14 +123,18 @@ async def authenticate(email: str, password: str) -> Optional[User]:
     return user
 
 @app.post("/login", summary="Create access and refresh tokens for user", response_model=TokenSchema)
-async def login(form: OAuth2PasswordRequestForm = Depends()) -> Any:
-    user = await authenticate(email=form.username, password=form.password)
+async def login(user: UserOut):
+    user = await authenticate(user.email, user.password)
     if not user:
         raise HTTPException(400, "Incorrect email or password")
     return {
         "access_token": create_access_token(user["id"]),
         "refresh_token": create_refresh_token(user["id"]),
     }
+
+@app.get('/me', summary='Get details of currently logged in user', response_model=UserOut)
+async def get_me(user: User = Depends(get_current_user)):
+    return user
 
 @app.post("/test-token", summary="Test is the access token is valid", response_model=User)
 async def test_token(user: User = Depends(get_current_user)):

@@ -51,8 +51,6 @@ const Form = () => {
 
   const register = async (values, onSubmitProps) => {
     // using formData because we need to send form infos with an image
-    console.log(values);
-    console.log(onSubmitProps);
     // const formData = new FormData();
     // for (let value in values) {
     //   if (value === "picture") {
@@ -65,14 +63,6 @@ const Form = () => {
     // for (var key of formData.entries()) {
     //   console.log(key[0] + ', ' + key[1]);
     // }
-
-    // const savedUserResponse = await fetch(
-    //   "http://localhost:8000/user",
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(formData),
-    //   }
-    // );
     const savedUserResponse = await fetch('http://localhost:8000/user', {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
@@ -93,41 +83,33 @@ const Form = () => {
     onSubmitProps.resetForm();
   };
 
-  // const addNote = async () => {
-  //   removeActive();
-  //   await fetch('http://localhost:8000/api/note', {
-  //     headers: {
-  //       'Content-Type': 'application/json; charset=UTF-8'
-  //     },
-  //     method: 'POST',
-  //     body: JSON.stringify({
-  //       note: "",
-  //       tags: [],
-  //       lastUpdated: new Date().toLocaleString('en-US', { 
-  //         year: 'numeric',
-  //         month: 'numeric',
-  //         day: 'numeric', 
-  //         hour: 'numeric', 
-  //         hour12: true, 
-  //         minute: 'numeric', 
-  //         second: 'numeric' 
-  //       }),
-  //       active: true
-  //     })
-  //   }).then((response) => {
-  //     console.log('note created');
-  //   });
-  // };
-
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:8000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+    const loggedInResponse = await fetch('http://localhost:8000/login', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      })
     });
-    const loggedIn = await loggedInResponse.json();
+    // .then((response) => {
+    //   if (response.status === 200) {
+    //     dispatch(
+    //       setLogin({
+    //         user: loggedInResponse.user,
+    //         token: loggedInResponse.token,
+    //       })
+    //     );
+    //     navigate("/home");
+    //     console.log("Hi");
+    //   }
+    // });
     onSubmitProps.resetForm();
-    if (loggedIn) {
+    const loggedIn = await loggedInResponse.json();
+    console.log(loggedIn['access_token']);
+    if (loggedIn['access_token'] !== undefined) {
       dispatch(
         setLogin({
           user: loggedIn.user,
@@ -138,9 +120,35 @@ const Form = () => {
     }
   };
 
+  // const login = async (values, onSubmitProps) => {
+  //   const loggedInResponse = await fetch("http://localhost:8000/login", {
+  //     headers: {
+  //       'Content-Type': 'application/json; charset=UTF-8'
+  //     },
+  //     method: "POST",
+  //     // body: JSON.stringify(values),
+  //     body: JSON.stringify({
+  //       email: values.email,
+  //       password: values.password,
+  //     })
+  //   }).then((response) => {
+  //     if (response.status === 200) {
+  //       console.log(loggedInResponse);
+  //       dispatch(
+  //         setLogin({
+  //           user: loggedInResponse.user,
+  //           token: loggedInResponse.token,
+  //         })
+  //       );
+  //       navigate("/home");
+  //     }
+  //   });
+  //   // const loggedIn = await loggedInResponse.json();
+  //   onSubmitProps.resetForm();
+  // };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
-    console.log("hi");
     if (isRegister) await register(values, onSubmitProps);
   };
 
