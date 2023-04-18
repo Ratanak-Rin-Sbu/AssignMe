@@ -103,7 +103,7 @@ const Form = () => {
       dispatch(
         setLogin({
           user: loggedIn.user,
-          token: loggedIn.access_token,
+          access_token: loggedIn.access_token,
         })
       );
       setIsInvalidInput(false);

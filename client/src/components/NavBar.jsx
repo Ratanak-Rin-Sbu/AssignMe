@@ -49,7 +49,7 @@ const NavBar = () => {
             cursor: "pointer",
             },
         }}
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/home')}
       >
           AssignME
       </Typography>

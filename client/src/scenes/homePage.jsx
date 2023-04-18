@@ -5,7 +5,7 @@ import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const HomePage = () => {
+const HomePage = ({ userId }) => {
   const navigate = useNavigate();
 
   return (
@@ -35,7 +35,7 @@ const HomePage = () => {
               cursor: "pointer"
             },
           }}
-          onClick={() => navigate('/taskManager')}
+          onClick={() => navigate(`/taskManager/${userId}`)}
         >
           <FlexBetween justifyContent="flex-start !important">
             <Assignment style={{
@@ -63,7 +63,7 @@ const HomePage = () => {
               cursor: "pointer"
             },
           }}
-          onClick={() => navigate('/schedule')}
+          onClick={() => navigate(`/schedule/${userId}`)}
         >
           <FlexBetween justifyContent="flex-start !important">
             <EventNote style={{
@@ -91,7 +91,7 @@ const HomePage = () => {
               cursor: "pointer"
             },
         }}
-        onClick={() => navigate('/note')}
+        onClick={() => navigate(`/note/${userId}`)}
         >
         <FlexBetween justifyContent="flex-start !important">
           <NoteAlt style={{
