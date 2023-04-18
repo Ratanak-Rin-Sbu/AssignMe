@@ -3,7 +3,7 @@ import FlexBetween from "./FlexBetween";
 import Course from "./Course";
 import { CalendarMonth } from "@mui/icons-material";
 
-const DeadlineCol = ({ tasks }) => {
+const DeadlineCol = ({ tasks, userId }) => {
 
   return <FlexBetween flexDirection="column">
     <Box m="2rem 10rem 0 0">
@@ -23,6 +23,7 @@ const DeadlineCol = ({ tasks }) => {
         key={task.id}
         para={task.deadline}
         task={task}
+        userId={userId}
       />
     ))}
   </FlexBetween>

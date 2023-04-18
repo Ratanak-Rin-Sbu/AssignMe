@@ -1,6 +1,7 @@
 import { Typography, Box, Modal } from "@mui/material";
 import { Delete, Create } from "@mui/icons-material"
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import FlexBetween from "./FlexBetween";
 
 // for this part, taken from https://codesandbox.io/s/days-of-the-week-picker-forked-h15q8q?file=/src/ToggleDays.js:41-221
@@ -81,7 +82,7 @@ const StyledToggle = withStyles({
 })(ToggleButton);
 // -------------------------------------------------------------------------------------------------------------until this part
 
-const ScheduleBox = ({ text, event, isDelete, isUpdate }) => {
+const ScheduleBox = ({ text, event, isDelete, isUpdate, userId }) => {
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -129,7 +130,7 @@ const ScheduleBox = ({ text, event, isDelete, isUpdate }) => {
   }
 
   const updateEvent = async () => {
-    await fetch(`http://localhost:8000/api/event/${event.id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/event/${event.id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -149,7 +150,7 @@ const ScheduleBox = ({ text, event, isDelete, isUpdate }) => {
   };
 
   const deleteEvent = async () => {
-    await fetch(`http://localhost:8000/api/event/${event.id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/event/${event.id}`, {
       method: 'DELETE',
     }).then((response) => {
       console.log("Deleted a task");

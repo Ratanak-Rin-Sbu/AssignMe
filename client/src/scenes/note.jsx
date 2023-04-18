@@ -14,13 +14,9 @@ import debounce from "lodash.debounce";
 
 import { useSelector } from "react-redux";
 
-const Note = () => {
+const Note = ({ userId }) => {
   const [notes, setNotes] = useState([]);
   const [tags, setTags] = useState([]);
-
-  const { id, picturePath } = useSelector((state) => state.user);
-  const userId = id
-  console.log(id);
 
   let activeNote = notes.filter((note) => {return (note.active === true)});
 
@@ -58,7 +54,7 @@ const Note = () => {
   };
 
   const getNotes = async () => {
-    const response = await fetch(`http://localhost:8000/api/${id}/notes`);
+    const response = await fetch(`http://localhost:8000/api/${userId}/notes`);
     const data = await response.json();
     setNotes(data);
   }

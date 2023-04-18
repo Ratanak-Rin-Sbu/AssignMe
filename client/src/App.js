@@ -14,6 +14,7 @@ function App() {
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
+  const { id } = useSelector((state) => state.user);
 
   return (
     <div className="app">
@@ -23,9 +24,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/home" element={<HomePage />} />
-            <Route path="/taskManager" element={<TaskManager />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/note" element={<Note />} />
+            <Route path="/taskManager" element={<TaskManager userId={id}/>} />
+            <Route path="/schedule" element={<Schedule userId={id}/>} />
+            <Route path="/note" element={<Note userId={id}/>} />
             {/* <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}

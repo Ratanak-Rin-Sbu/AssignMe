@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import CourseList from "components/CourseList";
 import NavBar from "components/NavBar";
 
-const TaskManager = () => {
+const TaskManager = ({ userId }) => {
   return (
     <>
       <NavBar />
@@ -26,7 +26,7 @@ const TaskManager = () => {
         >
             Click an existing task to add additional context or subtasks.
         </Typography>
-        <CourseList />
+        <CourseList userId={userId}/>
       </Box>
     </>
   )

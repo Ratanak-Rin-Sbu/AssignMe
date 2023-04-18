@@ -3,7 +3,7 @@ import FlexBetween from "./FlexBetween";
 import Course from "./Course";
 import { Subject } from "@mui/icons-material";
 
-const SubjectCol = ({ tasks }) => {
+const SubjectCol = ({ tasks, userId }) => {
 
   return <FlexBetween flexDirection="column">
     <Box m="2rem 10rem 0 0">
@@ -24,6 +24,7 @@ const SubjectCol = ({ tasks }) => {
         key={task.id}
         para={task.subject}
         task={task}
+        userId={userId}
       />
     ))}
   </FlexBetween>

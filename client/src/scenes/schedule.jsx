@@ -84,7 +84,7 @@ const StyledToggle = withStyles({
 })(ToggleButton);
 // -------------------------------------------------------------------------------------------------------------until this part
 
-const Schedule = () => {
+const Schedule = ({ userId }) => {
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -98,7 +98,7 @@ const Schedule = () => {
 
   const addEvent = async () => {
     if (name && location && color && startTime && endTime && days) {
-      await fetch('http://localhost:8000/api/event', {
+      await fetch(`http://localhost:8000/api/${userId}/event`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -139,7 +139,7 @@ const Schedule = () => {
         >
             Use this template to track your personal tasks.
         </Typography>
-        <ScheduleWrapper isDelete={isDelete} isUpdate={isUpdate}/>
+        <ScheduleWrapper isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
       </Box>
       <Box m="1% 6% 0 6%" width="180px">
         <FlexBetween>

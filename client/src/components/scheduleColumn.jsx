@@ -1,7 +1,7 @@
 import ScheduleBox from "./scheduleBox";
 import FlexBetween from "./FlexBetween";
 
-const ScheduleColumn = ({ text, events, isDelete, isUpdate }) => {
+const ScheduleColumn = ({ text, events, isDelete, isUpdate, userId }) => {
   if (events) {
     const event7_8 = events.filter((event) => {return (event.start === "7:00" && event.end === "8:00")});
     const event8_9 = events.filter((event) => {return (event.start === "8:00" && event.end === "9:00")});
@@ -24,23 +24,23 @@ const ScheduleColumn = ({ text, events, isDelete, isUpdate }) => {
       <>
         <FlexBetween flexDirection="column" sx={{maxHeight: "540px", minHeight: "540px"}}>
           <ScheduleBox text={text}/>
-          <ScheduleBox event={event7_8[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event8_9[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event9_10[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event10_11[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event11_12[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event12_13[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event13_14[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event14_15[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event15_16[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event16_17[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event17_18[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event18_19[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event19_20[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event20_21[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event21_22[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event22_23[0]} isDelete={isDelete} isUpdate={isUpdate}/>
-          <ScheduleBox event={event23_00[0]} isDelete={isDelete} isUpdate={isUpdate}/>
+          <ScheduleBox event={event7_8[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event8_9[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event9_10[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event10_11[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event11_12[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event12_13[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event13_14[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event14_15[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event15_16[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event16_17[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event17_18[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event18_19[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event19_20[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event20_21[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event21_22[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event22_23[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
+          <ScheduleBox event={event23_00[0]} isDelete={isDelete} isUpdate={isUpdate} userId={userId}/>
         </FlexBetween>
       </>
     )

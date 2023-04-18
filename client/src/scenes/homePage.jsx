@@ -7,9 +7,6 @@ import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { userId, picturePath } = useSelector((state) => state.user);
-
-  console.log(userId);
 
   return (
     <>

@@ -5,11 +5,10 @@ import DescCol from "./DescCol";
 import FlexBetween from "./FlexBetween";
 import DeadlineCol from "./DeadlineCol";
 import StatusCol from "./StatusCol";
-import MoreCol from "./MoreCol";
 import { Add, Delete } from "@mui/icons-material";
 import { Divider } from "@mui/material";
 
-const CourseList = () => {
+const CourseList = ({ userId }) => {
   const [isClickedAdd, setIsClickedAdd] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [subject, setSubject] = useState('');
@@ -18,7 +17,7 @@ const CourseList = () => {
   const [status, setStatus] = useState(false);
 
   const getTasks = async () => {
-    const response = await fetch('http://localhost:8000/api/todos');
+    const response = await fetch(`http://localhost:8000/api/${userId}/todos`);
     const data = await response.json();
     setTasks(data);
   }
@@ -29,7 +28,7 @@ const CourseList = () => {
 
   const addTask = async () => {
     if (subject && desc && deadline) {
-      await fetch('http://localhost:8000/api/todo', {
+      await fetch(`http://localhost:8000/api/${userId}/todo`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -49,7 +48,7 @@ const CourseList = () => {
   return <>
     <FlexBetween>
       <FlexBetween flexDirection="column">
-        <SubjectCol tasks={tasks}/>
+        <SubjectCol tasks={tasks} userId={userId}/>
         {isClickedAdd && (
           <input
             type="text"
@@ -68,7 +67,7 @@ const CourseList = () => {
       </FlexBetween>
 
       <FlexBetween flexDirection="column">
-        <DescCol tasks={tasks}/>
+        <DescCol tasks={tasks} userId={userId}/>
         {isClickedAdd && (
           <input
             type="text"
@@ -86,7 +85,7 @@ const CourseList = () => {
       </FlexBetween>
 
       <FlexBetween flexDirection="column">
-        <DeadlineCol tasks={tasks}/>
+        <DeadlineCol tasks={tasks} userId={userId}/>
         {isClickedAdd && (
           <input
             type="text"
@@ -104,7 +103,7 @@ const CourseList = () => {
       </FlexBetween>
 
       <FlexBetween flexDirection="column" sx={{maxWidth: "80px"}}>
-        <StatusCol tasks={tasks}/>
+        <StatusCol tasks={tasks} userId={userId}/>
         {isClickedAdd && (
           <FlexBetween>
             <input

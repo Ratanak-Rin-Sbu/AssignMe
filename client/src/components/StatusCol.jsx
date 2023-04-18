@@ -3,7 +3,7 @@ import FlexBetween from "./FlexBetween";
 import Course from "./Course";
 import { CheckBox } from "@mui/icons-material";
 
-const StatusCol = ({ tasks }) => {
+const StatusCol = ({ tasks, userId }) => {
 
   return <FlexBetween flexDirection="column">
     <Box m="2rem 10rem 0 0">
@@ -24,6 +24,7 @@ const StatusCol = ({ tasks }) => {
         key={task.id}
         para={task.status}
         task={task}
+        userId={userId}
       />
     ))}
   </FlexBetween>

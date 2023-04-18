@@ -5,11 +5,11 @@ import { Delete } from "@mui/icons-material"
 import FlexBetween from "./FlexBetween";
 import debounce from "lodash.debounce";
 
-const Course = ({ para, task }) => {
+const Course = ({ para, task, userId }) => {
 
   const updateTodo = async (e) => {
     if (para === task.subject) {
-      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+      await fetch(`http://localhost:8000/api/${userId}/todo/${task.id}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -21,7 +21,7 @@ const Course = ({ para, task }) => {
         console.log("Update a task");
       });
     } else if (para === task.description) {
-      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+      await fetch(`http://localhost:8000/api/${userId}/todo/${task.id}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -33,7 +33,7 @@ const Course = ({ para, task }) => {
         console.log("Update a task");
       });
     } else {
-      await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+      await fetch(`http://localhost:8000/api/${userId}/todo/${task.id}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -50,7 +50,7 @@ const Course = ({ para, task }) => {
   const debounceOnChange = debounce(updateTodo, 500);
 
   const updateStatus = async () => {
-    await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/todo/${task.id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -65,7 +65,7 @@ const Course = ({ para, task }) => {
   };
 
   const deleteTask = async () => {
-    await fetch(`http://localhost:8000/api/todo/${task.id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/todo/${task.id}`, {
       method: 'DELETE',
     }).then((response) => {
       console.log("Deleted a task");
