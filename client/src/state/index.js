@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   mode: "light",
   user: null,
-  token: null,
+  access_token: null,
   posts: [],
 };
 
@@ -16,11 +16,11 @@ export const authSlice = createSlice({
     },
     setLogin: (state, action) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.access_token = action.payload.access_token;
     },
     setLogout: (state) => {
       state.user = null;
-      state.token = null;
+      state.access_token = null;
     },
     setFriends: (state, action) => {
       if (state.user) {

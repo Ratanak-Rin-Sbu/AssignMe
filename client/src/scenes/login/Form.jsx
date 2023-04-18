@@ -98,11 +98,12 @@ const Form = () => {
     });
     onSubmitProps.resetForm();
     const loggedIn = await loggedInResponse.json();
+    console.log(loggedIn);
     if (loggedIn['access_token'] !== undefined) {
       dispatch(
         setLogin({
           user: loggedIn.user,
-          token: loggedIn.token,
+          token: loggedIn.access_token,
         })
       );
       setIsInvalidInput(false);

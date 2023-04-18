@@ -12,15 +12,21 @@ import { Typography, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import debounce from "lodash.debounce";
 
+import { useSelector } from "react-redux";
+
 const Note = () => {
   const [notes, setNotes] = useState([]);
   const [tags, setTags] = useState([]);
+
+  const { id, picturePath } = useSelector((state) => state.user);
+  const userId = id
+  console.log(id);
 
   let activeNote = notes.filter((note) => {return (note.active === true)});
 
   const setActive = async (note) => {
     console.log(note)
-    await fetch(`http://localhost:8000/api/note/${note.id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/note/${note.id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -38,7 +44,7 @@ const Note = () => {
     all.concat([notes[index]]), []);
 
   const removeActive = async () => {
-    await fetch(`http://localhost:8000/api/note/${activeNote[0].id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/note/${activeNote[0].id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -52,7 +58,7 @@ const Note = () => {
   };
 
   const getNotes = async () => {
-    const response = await fetch('http://localhost:8000/api/notes');
+    const response = await fetch(`http://localhost:8000/api/${id}/notes`);
     const data = await response.json();
     setNotes(data);
   }
@@ -63,7 +69,7 @@ const Note = () => {
 
   const addNote = async () => {
     removeActive();
-    await fetch('http://localhost:8000/api/note', {
+    await fetch(`http://localhost:8000/api/${userId}/note`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -88,7 +94,7 @@ const Note = () => {
   };
 
   const updateNote = async (e) => {
-    await fetch(`http://localhost:8000/api/note/${activeNote[0].id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/note/${activeNote[0].id}`, {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -115,7 +121,7 @@ const Note = () => {
   const debounceOnChange = debounce(updateNote, 500);
 
   const deleteNote = async () => {
-    await fetch(`http://localhost:8000/api/note/${activeNote[0].id}`, {
+    await fetch(`http://localhost:8000/api/${userId}/note/${activeNote[0].id}`, {
       method: 'DELETE',
     }).then((response) => {
       console.log("Deleted a task");

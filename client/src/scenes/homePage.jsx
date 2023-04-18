@@ -3,9 +3,13 @@ import FlexBetween from "components/FlexBetween";
 import NavBar from "components/NavBar";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { userId, picturePath } = useSelector((state) => state.user);
+
+  console.log(userId);
 
   return (
     <>

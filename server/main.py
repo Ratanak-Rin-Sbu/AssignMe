@@ -1,6 +1,7 @@
 import motor.motor_asyncio
 import asyncio
 import motor.core
+import json
 from fastapi import FastAPI, HTTPException, Depends, Request, status
 from model import Todo, UpdateTodoModel, Event, UpdateEventModel, Note, UpdateNoteModel
 from models.user_model import User, UserOut, TokenSchema, TokenPayload
@@ -122,14 +123,21 @@ async def authenticate(email: str, password: str) -> Optional[User]:
         return None
     return user
 
-@app.post("/login", summary="Create access and refresh tokens for user", response_model=TokenSchema)
-async def login(user: UserOut):
-    user = await authenticate(user.email, user.password)
+@app.post("/login", summary="Create access and refresh tokens for user")
+async def login(userr: UserOut):
+    user = await authenticate(userr.email, userr.password)
     if not user:
         raise HTTPException(400, "Incorrect email or password")
     return {
         "access_token": create_access_token(user["id"]),
-        "refresh_token": create_refresh_token(user["id"]),
+        "user": {
+            "_id": str(user["_id"]),
+            "id": str(user["id"]),
+            "username": user["username"],
+            "email": user["email"],
+            "password": user["password"],
+            "picture": user["picture"]
+        },
     }
 
 @app.get('/me', summary='Get details of currently logged in user', response_model=UserOut)
@@ -160,222 +168,6 @@ async def refresh_token(refresh_token: str = Body(...)):
         "access_token": create_access_token(user["id"]),
         "refresh_token": create_refresh_token(user["id"]),
     }
-
-# # TASK MANAGER
-# # GET ONE TASK
-# async def fetch_one_todo(id, current_user):
-#     document = await todoCollection.find_one({"id": id, "owner_id": current_user["id"]})
-#     return document
-
-# @app.get("/api/todo/{id}", response_model=Todo)
-# async def get_todo_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
-#     response = await fetch_one_todo(id, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no todo with the id {id}")
-
-# # GET ALL TASKS
-# async def fetch_all_todos(current_user):
-#     todos = []
-#     cursor = todoCollection.find({})
-#     async for document in cursor:
-#         if document["owner_id"] == current_user["id"]:
-#             todos.append(Todo(**document))
-#     return todos
-
-# @app.get("/api/todos")
-# async def get_todo(current_user: User = Depends(get_current_user)):
-#     response = await fetch_all_todos(current_user)
-#     return response
-
-# # CREATE A TASK
-# async def create_todo(todo, current_user):
-#     document = todo
-#     document["owner_id"] = current_user["id"]
-#     result = await todoCollection.insert_one(document)
-#     return document
-
-# @app.post("/api/todo", response_model=Todo)
-# async def post_todo(todo: Todo, current_user: User = Depends(get_current_user)):
-#     response = await create_todo(todo.dict(), current_user)
-#     if response:
-#         return response
-#     raise HTTPException(400, "Something went wrong")
-
-# # UPDATE A TASK (STATUS ONLY FOR NOW)
-# async def update_todo(id: PyObjectId, todo: UpdateTodoModel, current_user: User):
-#     if todo.subject != None:
-#         await todoCollection.update_one({"id": id}, {"$set": {"subject": todo.subject}})
-#     if todo.description != None:
-#         await todoCollection.update_one({"id": id}, {"$set": {"description": todo.description}})
-#     if todo.deadline != None:
-#         await todoCollection.update_one({"id": id}, {"$set": {"deadline": todo.deadline}})
-#     if todo.status != None:
-#         await todoCollection.update_one({"id": id}, {"$set": {"status": todo.status}})
-#     document = await todoCollection.find_one({"id": id, "owner_id": current_user["id"]})
-#     return document
-
-# @app.put("/api/todo/{id}", response_model=Todo)
-# async def put_todo(id: PyObjectId, todo: UpdateTodoModel, current_user: User = Depends(get_current_user)):
-#     response = await update_todo(id, todo, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no todo with the id {id}")
-
-# # DELETE A TASK
-# async def remove_todo(id: PyObjectId, current_user: User):
-#     await todoCollection.delete_one({"id": id, "owner_id": current_user["id"]})
-#     return True
-
-# @app.delete("/api/todo/{id}")
-# async def delete_todo(id: PyObjectId, current_user: User = Depends(get_current_user)):
-#     response = await remove_todo(id, current_user)
-#     if response:
-#         return "Successfully deleted todo"
-#     raise HTTPException(404, f"There is no todo with the id {id}")
-
-# # EVENT
-# # GET ONE EVENT
-# async def fetch_one_event(id, current_user):
-#     document = await eventCollection.find_one({"id": id, "owner_id": current_user.id})
-#     return document
-
-# @app.get("/api/event/{id}", response_model=Event)
-# async def get_event_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
-#     response = await fetch_one_event(id, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no event with the id {id}")
-
-# # GET ALL EVENTS
-# async def fetch_all_events(current_user):
-#     events = []
-#     cursor = eventCollection.find({})
-#     async for document in cursor:
-#         if document["owner_id"] == current_user["id"]:
-#             events.append(Event(**document))
-#     return events
-
-# @app.get("/api/events")
-# async def get_events(current_user: User = Depends(get_current_user)):
-#     response = await fetch_all_events(current_user)
-#     return response
-
-# # CREATE AN EVENT
-# async def create_event(event, current_user):
-#     document = event
-#     document["owner_id"] = current_user["id"]
-#     result = await eventCollection.insert_one(document)
-#     return document
-
-# @app.post("/api/event", response_model=Event)
-# async def post_event(event: Event, current_user: User = Depends(get_current_user)):
-#     response = await create_event(event.dict(), current_user)
-#     if response:
-#         return response
-#     raise HTTPException(400, "Something went wrong")
-
-# # UPDATE AN EVENT
-# async def update_event(id: PyObjectId, event: UpdateEventModel, current_user: User):
-#     if event.name != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"name": event.name}})
-#     if event.place != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"place": event.place}})
-#     if event.start != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"start": event.start}})
-#     if event.end != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"end": event.end}})
-#     if event.color != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"color": event.color}})
-#     if event.days != None:
-#         await eventCollection.update_one({"id": id}, {"$set": {"days": event.days}})
-#     document = await eventCollection.find_one({"id": id, "owner_id": current_user["id"]})
-#     return document
-
-# @app.put("/api/event/{id}", response_model=Event)
-# async def put_event(id: PyObjectId, event: UpdateEventModel, current_user: User = Depends(get_current_user)):
-#     response = await update_event(id, event, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no event with the id {id}")
-
-# # DELETE A EVENT
-# async def remove_event(id: PyObjectId, current_user: User):
-#     await eventCollection.delete_one({"id": id, "owner_id": current_user["id"]})
-#     return True
-
-# @app.delete("/api/event/{id}")
-# async def delete_event(id: PyObjectId, current_user: User = Depends(get_current_user)):
-#     response = await remove_event(id, current_user)
-#     if response:
-#         return "Successfully deleted event"
-#     raise HTTPException(404, f"There is no event with the id {id}")
-
-# # Note
-# # GET ONE Note
-# async def fetch_one_note(id, current_user):
-#     document = await noteCollection.find_one({"id": id, "owner_id": current_user["id"]})
-#     return document
-
-# @app.get("/api/note/{id}", response_model=Todo)
-# async def get_note_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
-#     response = await fetch_one_note(id, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no note with the id {id}")
-
-# # GET ALL notes
-# async def fetch_all_notes(current_user):
-#     notes = []
-#     cursor = noteCollection.find({})
-#     async for document in cursor:
-#         if document["owner_id"] == current_user["id"]:
-#             notes.append(Note(**document))
-#     return notes
-
-# @app.get("/api/{userId}/notes")
-# async def get_note(current_user: User = Depends(get_current_user)):
-#     response = await fetch_all_notes(current_user)
-#     return response
-
-# # CREATE A Note
-# async def create_note(note):
-#     document = note
-#     document["owner_id"] = create_user["id"]
-#     result = await noteCollection.insert_one(document)
-#     return document
-
-# @app.post("/api/note", response_model=Note)
-# async def post_note(note: Note, current_user: User = Depends(get_current_user)):
-#     response = await create_note(note.dict(), current_user)
-#     if response:
-#         return response
-#     raise HTTPException(400, "Something went wrong")
-
-# # UPDATE A Note
-# async def update_note(id: PyObjectId, note: UpdateNoteModel, current_user: User):
-#     if note.note != None:
-#         await noteCollection.update_one({"id": id}, {"$set": {"note": note.note}})
-#     if note.tags != None:
-#         await noteCollection.update_one({"id": id}, {"$set": {"tags": note.tags}})
-#     if note.lastUpdated != None:
-#         await noteCollection.update_one({"id": id}, {"$set": {"lastUpdated": note.lastUpdated}})
-#     if note.active != None:
-#         await noteCollection.update_one({"id": id}, {"$set": {"active": note.active}})
-#     document = await noteCollection.find_one({"id": id, "owner_id": current_user["id"]})
-#     return document
-
-# @app.put("/api/note/{id}", response_model=Note)
-# async def put_note(id: PyObjectId, note: UpdateNoteModel, current_user: User = Depends(get_current_user)):
-#     response = await update_note(id, note, current_user)
-#     if response:
-#         return response
-#     raise HTTPException(404, f"There is no note with the id {id}")
-
-# # DELETE A Note
-# async def remove_note(id: PyObjectId, current_user: User):
-#     await noteCollection.delete_one({"id": id, "owner_id": current_user["id"]})
-#     return True
 
 # TASK MANAGER II
 # GET ONE TASK
@@ -599,3 +391,219 @@ async def delete_note(id: PyObjectId, userId: PyObjectId):
     if response:
         return "Successfully deleted note"
     raise HTTPException(404, f"There is no note with the id {id}")
+
+# # TASK MANAGER
+# # GET ONE TASK
+# async def fetch_one_todo(id, current_user):
+#     document = await todoCollection.find_one({"id": id, "owner_id": current_user["id"]})
+#     return document
+
+# @app.get("/api/todo/{id}", response_model=Todo)
+# async def get_todo_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
+#     response = await fetch_one_todo(id, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no todo with the id {id}")
+
+# # GET ALL TASKS
+# async def fetch_all_todos(current_user):
+#     todos = []
+#     cursor = todoCollection.find({})
+#     async for document in cursor:
+#         if document["owner_id"] == current_user["id"]:
+#             todos.append(Todo(**document))
+#     return todos
+
+# @app.get("/api/todos")
+# async def get_todo(current_user: User = Depends(get_current_user)):
+#     response = await fetch_all_todos(current_user)
+#     return response
+
+# # CREATE A TASK
+# async def create_todo(todo, current_user):
+#     document = todo
+#     document["owner_id"] = current_user["id"]
+#     result = await todoCollection.insert_one(document)
+#     return document
+
+# @app.post("/api/todo", response_model=Todo)
+# async def post_todo(todo: Todo, current_user: User = Depends(get_current_user)):
+#     response = await create_todo(todo.dict(), current_user)
+#     if response:
+#         return response
+#     raise HTTPException(400, "Something went wrong")
+
+# # UPDATE A TASK (STATUS ONLY FOR NOW)
+# async def update_todo(id: PyObjectId, todo: UpdateTodoModel, current_user: User):
+#     if todo.subject != None:
+#         await todoCollection.update_one({"id": id}, {"$set": {"subject": todo.subject}})
+#     if todo.description != None:
+#         await todoCollection.update_one({"id": id}, {"$set": {"description": todo.description}})
+#     if todo.deadline != None:
+#         await todoCollection.update_one({"id": id}, {"$set": {"deadline": todo.deadline}})
+#     if todo.status != None:
+#         await todoCollection.update_one({"id": id}, {"$set": {"status": todo.status}})
+#     document = await todoCollection.find_one({"id": id, "owner_id": current_user["id"]})
+#     return document
+
+# @app.put("/api/todo/{id}", response_model=Todo)
+# async def put_todo(id: PyObjectId, todo: UpdateTodoModel, current_user: User = Depends(get_current_user)):
+#     response = await update_todo(id, todo, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no todo with the id {id}")
+
+# # DELETE A TASK
+# async def remove_todo(id: PyObjectId, current_user: User):
+#     await todoCollection.delete_one({"id": id, "owner_id": current_user["id"]})
+#     return True
+
+# @app.delete("/api/todo/{id}")
+# async def delete_todo(id: PyObjectId, current_user: User = Depends(get_current_user)):
+#     response = await remove_todo(id, current_user)
+#     if response:
+#         return "Successfully deleted todo"
+#     raise HTTPException(404, f"There is no todo with the id {id}")
+
+# # EVENT
+# # GET ONE EVENT
+# async def fetch_one_event(id, current_user):
+#     document = await eventCollection.find_one({"id": id, "owner_id": current_user.id})
+#     return document
+
+# @app.get("/api/event/{id}", response_model=Event)
+# async def get_event_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
+#     response = await fetch_one_event(id, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no event with the id {id}")
+
+# # GET ALL EVENTS
+# async def fetch_all_events(current_user):
+#     events = []
+#     cursor = eventCollection.find({})
+#     async for document in cursor:
+#         if document["owner_id"] == current_user["id"]:
+#             events.append(Event(**document))
+#     return events
+
+# @app.get("/api/events")
+# async def get_events(current_user: User = Depends(get_current_user)):
+#     response = await fetch_all_events(current_user)
+#     return response
+
+# # CREATE AN EVENT
+# async def create_event(event, current_user):
+#     document = event
+#     document["owner_id"] = current_user["id"]
+#     result = await eventCollection.insert_one(document)
+#     return document
+
+# @app.post("/api/event", response_model=Event)
+# async def post_event(event: Event, current_user: User = Depends(get_current_user)):
+#     response = await create_event(event.dict(), current_user)
+#     if response:
+#         return response
+#     raise HTTPException(400, "Something went wrong")
+
+# # UPDATE AN EVENT
+# async def update_event(id: PyObjectId, event: UpdateEventModel, current_user: User):
+#     if event.name != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"name": event.name}})
+#     if event.place != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"place": event.place}})
+#     if event.start != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"start": event.start}})
+#     if event.end != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"end": event.end}})
+#     if event.color != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"color": event.color}})
+#     if event.days != None:
+#         await eventCollection.update_one({"id": id}, {"$set": {"days": event.days}})
+#     document = await eventCollection.find_one({"id": id, "owner_id": current_user["id"]})
+#     return document
+
+# @app.put("/api/event/{id}", response_model=Event)
+# async def put_event(id: PyObjectId, event: UpdateEventModel, current_user: User = Depends(get_current_user)):
+#     response = await update_event(id, event, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no event with the id {id}")
+
+# # DELETE A EVENT
+# async def remove_event(id: PyObjectId, current_user: User):
+#     await eventCollection.delete_one({"id": id, "owner_id": current_user["id"]})
+#     return True
+
+# @app.delete("/api/event/{id}")
+# async def delete_event(id: PyObjectId, current_user: User = Depends(get_current_user)):
+#     response = await remove_event(id, current_user)
+#     if response:
+#         return "Successfully deleted event"
+#     raise HTTPException(404, f"There is no event with the id {id}")
+
+# # Note
+# # GET ONE Note
+# async def fetch_one_note(id, current_user):
+#     document = await noteCollection.find_one({"id": id, "owner_id": current_user["id"]})
+#     return document
+
+# @app.get("/api/note/{id}", response_model=Todo)
+# async def get_note_by_id(id: PyObjectId, current_user: User = Depends(get_current_user)):
+#     response = await fetch_one_note(id, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no note with the id {id}")
+
+# # GET ALL notes
+# async def fetch_all_notes(current_user):
+#     notes = []
+#     cursor = noteCollection.find({})
+#     async for document in cursor:
+#         if document["owner_id"] == current_user["id"]:
+#             notes.append(Note(**document))
+#     return notes
+
+# @app.get("/api/{userId}/notes")
+# async def get_note(current_user: User = Depends(get_current_user)):
+#     response = await fetch_all_notes(current_user)
+#     return response
+
+# # CREATE A Note
+# async def create_note(note):
+#     document = note
+#     document["owner_id"] = create_user["id"]
+#     result = await noteCollection.insert_one(document)
+#     return document
+
+# @app.post("/api/note", response_model=Note)
+# async def post_note(note: Note, current_user: User = Depends(get_current_user)):
+#     response = await create_note(note.dict(), current_user)
+#     if response:
+#         return response
+#     raise HTTPException(400, "Something went wrong")
+
+# # UPDATE A Note
+# async def update_note(id: PyObjectId, note: UpdateNoteModel, current_user: User):
+#     if note.note != None:
+#         await noteCollection.update_one({"id": id}, {"$set": {"note": note.note}})
+#     if note.tags != None:
+#         await noteCollection.update_one({"id": id}, {"$set": {"tags": note.tags}})
+#     if note.lastUpdated != None:
+#         await noteCollection.update_one({"id": id}, {"$set": {"lastUpdated": note.lastUpdated}})
+#     if note.active != None:
+#         await noteCollection.update_one({"id": id}, {"$set": {"active": note.active}})
+#     document = await noteCollection.find_one({"id": id, "owner_id": current_user["id"]})
+#     return document
+
+# @app.put("/api/note/{id}", response_model=Note)
+# async def put_note(id: PyObjectId, note: UpdateNoteModel, current_user: User = Depends(get_current_user)):
+#     response = await update_note(id, note, current_user)
+#     if response:
+#         return response
+#     raise HTTPException(404, f"There is no note with the id {id}")
+
+# # DELETE A Note
+# async def remove_note(id: PyObjectId, current_user: User):
+#     await noteCollection.delete_one({"id": id, "owner_id": current_user["id"]})
+#     return True
